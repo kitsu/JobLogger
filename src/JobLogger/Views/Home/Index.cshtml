@@ -1,0 +1,59 @@
+﻿@model IEnumerable<BaseLog>
+@{
+    ViewData["Title"] = "Index";
+}
+@using Microsoft.AspNetCore.Identity
+@using JobLogger.Models
+
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+@if (SignInManager.IsSignedIn(User))
+{
+    <br />
+    <div class="row">
+        <div class="panel panel-default col-md-6 col-md-offset-3">
+            <div class="panel-heading">
+                <h3 class="panel-title">@User.Identity.Name</h3>
+            </div>
+            <div class="panel-body">
+                <div class="btn-group btn-group-justified" role="group" aria-label="...">
+                    <a class="btn btn-primary" asp-controller="LogLists"
+                       asp-action="Week"
+                       asp-route-id="1">
+                        View Logs <span class="badge">@Model.Count()</span>
+                    </a>
+                    <a class="btn btn-default" asp-controller="LogLists"
+                       asp-action="Add">
+                        Add Log
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="row">
+    <div class="col-md-4 col-md-offset-1">
+        <h3>Purpose:</h3>
+        <p>This web application is meant to provide a convenient way to store
+        Job Search Logs as required by Washington State to recieve unemployment
+        benefits. Logs are created using a convenient web form and stored in a
+        database. You no longer need to store your logs on one device, or worse,
+        maintain paper logs.</p>
+        <p>While reasonable efforts are made to maintain user data and make it
+        availible at all times, this is a free service with no waranty expressed
+        or implied. Use at your own risk.</p>
+    </div>
+    <div class="col-md-4 col-md-offset-1">
+        <h3>Usage:</h3>
+        <p>First <a asp-controller="Account" asp-action="Register">Register</a>
+        an account using either your email and a password or another
+        identity provider. Your email will only be used for identification,
+        or to notify you of any changes to the service or your account.</p>
+        <p>You can also close your account at any time and all your logs and
+        user credentials will be deleted.</p>
+    </div>
+    </div>
+}
