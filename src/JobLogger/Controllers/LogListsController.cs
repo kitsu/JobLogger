@@ -59,11 +59,24 @@ namespace JobLogger.Controllers
             if (ModelState.IsValid)
             {
                 await _logRepository.AddAsync(log);
-                return Json(new {good = true,
+                return Json(new {success = true,
                                  data = Json(log)
                 });
             }
-            return Json(new { good = false });
+            return Json(new { success = false });
+        }
+
+        // DELETE: /LogLists/delete
+        [HttpDelete]
+        public async Task<JsonResult> Delete(String target)
+        {
+            var logId = Guid.NewGuid();
+            if (Guid.TryParse(target, out logId))
+            {
+                await _logRepository.DeleteAsync(logId);
+                return Json(new { success = true });
+            }
+            return Json(new { success = false });
         }
     }
 }

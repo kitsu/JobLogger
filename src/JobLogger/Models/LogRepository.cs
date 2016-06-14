@@ -14,6 +14,7 @@ namespace JobLogger.Models
     {
         Task<IEnumerable<BaseLog>> JobLogsAsync();
         Task AddAsync(BaseLog log);
+        Task DeleteAsync(Guid logId);
     }
 
     public class LogRepository : ILogRepository
@@ -62,8 +63,24 @@ namespace JobLogger.Models
                      cuser.JobLogs = new List<BaseLog>();
                 }
                 var logs = cuser.JobLogs;
-                log.Id = new Guid();
                 logs.Add(log);
+                await _userManager.UpdateAsync(cuser);
+            }
+        }
+        public async Task DeleteAsync(Guid logId)
+        {
+            var cuser = await GetCurrentUser();
+            if (cuser != null)
+            {
+                var uid = cuser.Id;
+                var logs = from log in _context.JobLogs
+                           where log.ApplicationUser.Id == uid
+                           where log.Id == logId
+                           select log;
+                foreach (var log in logs)
+                {
+                    cuser.JobLogs.Remove(log);
+                }
                 await _userManager.UpdateAsync(cuser);
             }
         }

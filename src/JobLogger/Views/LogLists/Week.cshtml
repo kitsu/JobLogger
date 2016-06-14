@@ -25,3 +25,28 @@ else
         @Html.Partial("_LogPartial", log)
     }
 }
+
+@section scripts
+{
+    <script type="text/javascript">
+        $(function () {
+            // Wire up delete buttons
+            $('button[data-trigger="deleteLog"]').each(function () {
+                var $elem = $(this);
+                var target = $elem.data("target");
+                $elem.click(function (e) {
+                    e.preventDefault();
+                    $.ajax({
+                        url: "/LogLists/delete/",
+                        type: "DELETE",
+                        data: {"target": target}
+                    }).done(function (result) {
+                        if (result.success) {
+                            $("#log-" + target).remove();
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+}

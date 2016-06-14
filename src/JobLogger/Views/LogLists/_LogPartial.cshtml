@@ -4,31 +4,54 @@
 @if (Model is ActivityLog)
 {
     var actLog = (Model as ActivityLog);
-    <div class="panel panel-default">
+    <div id="log-@actLog.Id" class="panel panel-default">
         <div class="panel-heading" role="tab" id="headingOne">
-                    <h4 class="panel-title pull-left">
-                        <a role="button" data-toggle="collapse" href="#@actLog.Id"
-                           aria-expanded="false" aria-controls="@actLog.Id"
-                           class="btn">
-                            <span class="label label-default">
-                                @actLog.LogDate.ToShortDateString()
-                            </span>
-                            &nbsp; Activity at
-                            @actLog.Location
-                            <span class="glyphicon glyphicon-menu-down"></span>
-                        </a>
-                    </h4>
-                <div class="btn-group pull-right">
-                    <a class="btn btn-sm btn-default">Edit</a>
-                    <a class="btn btn-sm btn-danger">Delete</a>
+            <h4 class="panel-title pull-left">
+                <a role="button" data-toggle="collapse" href="#body-@actLog.Id"
+                   aria-expanded="false" aria-controls="body-@actLog.Id"
+                   class="btn">
+                    <span class="label label-default">
+                        @actLog.LogDate.ToShortDateString()
+                    </span>
+                    &nbsp; Activity at
+                    @actLog.Location
+                    <span class="glyphicon glyphicon-menu-down"></span>
+                </a>
+            </h4>
+            <div class="btn-group pull-right">
+                <a class="btn btn-sm btn-default">Edit</a>
+                <a class="btn btn-sm btn-danger" role="button"
+                   data-toggle="collapse" aria-expanded="false" aria-controls="DeletePrompt"
+                   data-target="#delete-@actLog.Id">
+                    Delete
+                </a>
+            </div>
+            <br />
+            <br />
+            <div class="collapse" id="delete-@actLog.Id">
+                <div class="alert alert-danger" role="alert">
+                    <h4>Really Delete?</h4>
+                    <p>This cannot be undone!</p>
+                    <p>
+                        <button type="button" class="btn btn-danger"
+                                data-trigger="deleteLog" data-target="@actLog.Id">
+                            Really Delete!
+                        </button>
+                        <button type="button" class="btn btn-default"
+                                data-toggle="collapse" aria-expanded="false" aria-controls="DeletePrompt"
+                                data-target="#delete-@actLog.Id">
+                            Nevermind
+                        </button>
+                    </p>
                 </div>
+            </div>
             <div class="clearfix"></div>
         </div>
-        <div id="@actLog.Id" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+        <div id="body-@actLog.Id" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
             <div class="panel-body">
                 <dl class="dl-horizontal">
-                <dt>Description:</dt>
-                <dd><pre>@actLog.Description</pre></dd>
+                    <dt>Description:</dt>
+                    <dd><pre>@actLog.Description</pre></dd>
                 </dl>
             </div>
         </div>
@@ -37,27 +60,50 @@
 else if (Model is ContactLog)
 {
     var conLog = (Model as ContactLog);
-    <div class="panel panel-default">
+    <div id="log-@conLog.Id" class="panel panel-default">
         <div class="panel-heading" role="tab">
-                    <h4 class="panel-title pull-left">
-                        <a role="button" data-toggle="collapse" href="#@conLog.Id"
-                           aria-expanded="false" aria-controls="@conLog.Id"
-                           class="btn">
-                            <span class="label label-default">
-                                @conLog.LogDate.ToShortDateString()
-                            </span>
-                            &nbsp; Contacted
-                            @conLog.Employer
-                            <span class="glyphicon glyphicon-menu-down"></span>
-                        </a>
-                    </h4>
-                <div class="btn-group pull-right">
-                    <a class="btn btn-sm btn-default">Edit</a>
-                    <a class="btn btn-sm btn-danger">Delete</a>
+            <h4 class="panel-title pull-left">
+                <a role="button" data-toggle="collapse" href="#body-@conLog.Id"
+                   aria-expanded="false" aria-controls="body-@conLog.Id"
+                   class="btn">
+                    <span class="label label-default">
+                        @conLog.LogDate.ToShortDateString()
+                    </span>
+                    &nbsp; Contacted
+                    @conLog.Employer
+                    <span class="glyphicon glyphicon-menu-down"></span>
+                </a>
+            </h4>
+            <div class="btn-group pull-right">
+                <a class="btn btn-sm btn-default">Edit</a>
+                <a class="btn btn-sm btn-danger" role="button"
+                   data-toggle="collapse" aria-expanded="false" aria-controls="DeletePrompt"
+                   data-target="#delete-@conLog.Id">
+                    Delete
+                </a>
+            </div>
+            <br />
+            <br />
+            <div class="collapse" id="delete-@conLog.Id">
+                <div class="alert alert-danger" role="alert">
+                    <h4>Really Delete?</h4>
+                    <p>This cannot be undone!</p>
+                    <p>
+                        <button type="button" class="btn btn-danger"
+                                data-trigger="deleteLog" data-target="@conLog.Id">
+                            Really Delete!
+                        </button>
+                        <button type="button" class="btn btn-default"
+                                data-toggle="collapse" aria-expanded="false" aria-controls="DeletePrompt"
+                                data-target="#delete-@conLog.Id">
+                            Nevermind
+                        </button>
+                    </p>
                 </div>
+            </div>
             <div class="clearfix"></div>
         </div>
-        <div id="@conLog.Id" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+        <div id="body-@conLog.Id" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
             <div class="panel-body">
                 <dl class="dl-horizontal">
                     <dt>Contact Type:</dt>
@@ -68,23 +114,25 @@ else if (Model is ContactLog)
                     <dd>@conLog.Contact</dd>
                     <dt>Phone:</dt>
                     <dd>
-                    @if (conLog.Phone != null)
-                    {
-                        @conLog.Phone;
-                    } else
-                    {
-                        @:Not provided
+                        @if (conLog.Phone != null)
+                        {
+                            @conLog.Phone;
+                        }
+                        else
+                        {
+                            @:Not provided
                     }
                     </dd>
                     <dt>Address:</dt>
                     <dd>
-                    @if (conLog.Address.StartsWith("http"))
-                    {
-                        <a href="@conLog.Address">@conLog.Address</a>
-                    } else
-                    {
-                        @conLog.Address
-                    }
+                        @if (conLog.Address.StartsWith("http"))
+                        {
+                            <a href="@conLog.Address">@conLog.Address</a>
+                        }
+                        else
+                        {
+                            @conLog.Address
+                        }
                     </dd>
                     <dt>City:</dt>
                     <dd>@conLog.City</dd>
@@ -96,8 +144,8 @@ else if (Model is ContactLog)
             </div>
         </div>
     </div>
-        }
-        else
-        {
+}
+else
+{
             <div class="bg-danger">Unknown Log!</div>
         }
