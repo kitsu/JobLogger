@@ -37,7 +37,6 @@
                     </button>
                 </div>
             </div>
-            <pre data-bind="text: ko.toJSON(actModel)"></pre>
         </form>
     </div>
     <!-- Contact form -->
@@ -63,18 +62,14 @@
                         <div class="panel-body">
                             <div class="btn-group" data-toggle="buttons"
                                  data-bind="radio: MethodType">
+                                @foreach (int val in typeof(MethodType).GetEnumValues())
+                                {
                                 <label class="btn btn-primary active">
-                                    <input type="radio" name="method" id="methodApply"
-                                           value="0" autocomplete="off" checked /> Application
+                                    <input type="radio" name="method"
+                                           value="@val" autocomplete="off" checked />
+                                    @typeof(MethodType).GetEnumName(val)
                                 </label>
-                                <label class="btn btn-primary">
-                                    <input type="radio" name="method" id="methodInter"
-                                           value="1" autocomplete="off" /> Interview
-                                </label>
-                                <label class="btn btn-primary">
-                                    <input type="radio" name="method" id="methodInquiry"
-                                           value="2" autocomplete="off" /> Inquery
-                                </label>
+                                }
                             </div>
                         </div>
                     </div>
@@ -85,30 +80,14 @@
                         <div class="panel-body">
                             <div class="btn-group" data-toggle="buttons"
                                  data-bind="radio: MeansType">
+                                @foreach (int val in typeof(MeansType).GetEnumValues())
+                                {
                                 <label class="btn btn-primary active">
-                                    <input type="radio" name="means" id="meansOnline"
-                                           value="0" autocomplete="off" checked /> Online
+                                    <input type="radio" name="method"
+                                           value="@val" autocomplete="off" checked />
+                                    @typeof(MeansType).GetEnumName(val)
                                 </label>
-                                <label class="btn btn-primary">
-                                    <input type="radio" name="means" id="meansMail"
-                                           value="1" autocomplete="off" /> Mail
-                                </label>
-                                <label class="btn btn-primary">
-                                    <input type="radio" name="means" id="meansPerson"
-                                           value="2" autocomplete="off" /> In Person
-                                </label>
-                                <label class="btn btn-primary">
-                                    <input type="radio" name="means" id="meansKiosk"
-                                           value="3" autocomplete="off" /> Kiosk
-                                </label>
-                                <label class="btn btn-primary">
-                                    <input type="radio" name="means" id="meansTelephone"
-                                           value="4" autocomplete="off" /> Telephone
-                                </label>
-                                <label class="btn btn-primary">
-                                    <input type="radio" name="means" id="meansFax"
-                                           value="5" autocomplete="off" /> Fax
-                                </label>
+                                }
                             </div>
                         </div>
                     </div>
@@ -117,9 +96,9 @@
             <div class="form-group">
                 <label for="LogContact" class="col-md-1 control-label">Contact</label>
                 <div class="col-md-5">
-                    <input type="text" class="form-control" id="LogContact"
-                           maxlength="64" placeholder="Name/Website (e.g. Monster)"
-                           data-bind="value: Contact" />
+                    <input type="text" class="form-control" maxlength="64"
+                           data-bind="value: Contact,
+                                      attr: {placeholder: $root.contactPrompt()}" />
                 </div>
                 <label for="LogPhone" class="col-md-1 control-label">Phone</label>
                 <div class="col-md-5">
@@ -131,9 +110,9 @@
             <div class="form-group">
                 <label for="LogAddress" class="col-md-1 control-label">Address</label>
                 <div class="col-md-6">
-                    <input type="text" class="form-control" id="LogAddress"
-                           maxlength="64" placeholder="Street/Web/E-mail"
-                           data-bind="value: Address" />
+                    <input type="text" class="form-control" maxlength="64"
+                           data-bind="value: Address,
+                                      attr: {placeholder: $root.addressPrompt()}" />
                 </div>
                 <label for="LogCity" class="col-md-1 control-label">City</label>
                 <div class="col-md-2">

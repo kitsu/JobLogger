@@ -72,8 +72,18 @@ var ConLogModel = (function () {
         this.Phone = ko.observable("");
         this.Address = ko.observable("");
         this.City = ko.observable("");
-        this.State = ko.observable("");
+        this.State = ko.observable("Wa");
     }
+    ConLogModel.prototype.addressPrompt = function () {
+        if (this.MeansType() === "0")
+            return "Website";
+        return "Street address";
+    };
+    ConLogModel.prototype.contactPrompt = function () {
+        if (parseInt(this.MeansType(), 10) <= 1)
+            return "Name [E-mail]";
+        return "Name/Booth";
+    };
     ConLogModel.prototype.postLog = function (form) {
         var data = ko.toJSON(this);
         ConLogModel.AjaxOptions.data = data;

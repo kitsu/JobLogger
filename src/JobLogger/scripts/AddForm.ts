@@ -38,7 +38,6 @@ ko.bindingHandlers["radio"] = {
     }
 };
 
-
 class ActLogModel {
     static AjaxOptions: any = {
         url: "/LogLists/AddActivity",
@@ -103,7 +102,17 @@ class ConLogModel {
         this.Phone = ko.observable("");
         this.Address = ko.observable("");
         this.City = ko.observable("");
-        this.State = ko.observable("");
+        this.State = ko.observable("Wa");
+    }
+
+    addressPrompt(): string {
+        if (this.MeansType() === "0") return "Website";
+        return "Street address";
+    }
+
+    contactPrompt(): string {
+        if (parseInt(this.MeansType(), 10) <= 1) return "Name [E-mail]";
+        return "Name/Booth";
     }
 
     postLog(form: Element): void {
