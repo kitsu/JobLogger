@@ -22,21 +22,6 @@ else
 {
     @foreach (BaseLog log in Model)
     {
-        <div class="panel panel-default">
-            <div class="panel-body">
-                @if (log is ActivityLog)
-                {
-                    <text>Activity Log!</text>
-                } else if (log is ContactLog)
-                {
-                    <text>Contact Log!</text>
-                } else
-                {
-                    <text>Unknown Log!</text>
-                }
-            </div>
-
-
-        </div>
+        @Html.Partial("_LogPartial", log)
     }
 }
