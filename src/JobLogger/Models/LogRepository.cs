@@ -13,8 +13,10 @@ namespace JobLogger.Models
     public interface ILogRepository
     {
         Task<IEnumerable<BaseLog>> JobLogsAsync();
-        Task AddAsync(BaseLog log);
-        Task DeleteAsync(Guid logId);
+        Task<bool> AddAsync(BaseLog log);
+        Task<BaseLog> GetLogAsync(Guid logId);
+        Task<bool> UpdateAsync(BaseLog log);
+        Task<bool> DeleteAsync(Guid logId);
     }
 
     public class LogRepository : ILogRepository
@@ -53,7 +55,7 @@ namespace JobLogger.Models
             return new List<BaseLog>();
         }
 
-        public async Task AddAsync(BaseLog log)
+        public async Task<bool> AddAsync(BaseLog log)
         {
             var cuser = await GetCurrentUser();
             if (cuser != null)
@@ -65,9 +67,41 @@ namespace JobLogger.Models
                 var logs = cuser.JobLogs;
                 logs.Add(log);
                 await _userManager.UpdateAsync(cuser);
+                return true;
             }
+            return false;
         }
-        public async Task DeleteAsync(Guid logId)
+
+        public async Task<bool> UpdateAsync(BaseLog updated)
+        {
+            var cuser = await GetCurrentUser();
+            if (cuser != null)
+            {
+                var uid = cuser.Id;
+                var logs = from log in _context.JobLogs
+                           where log.ApplicationUser.Id == uid
+                           where log.Id == updated.Id
+                           select log;
+                if (logs.Count() > 0)
+                {
+                    var exist = logs.First();
+                    Type DestType = exist.GetType();
+                    Type SrcType = updated.GetType();
+                    if (SrcType == DestType)
+                    {
+                        foreach (var prop in SrcType.GetProperties())
+                        {
+                            prop.SetValue(exist, prop.GetValue(updated, null), null);
+                        }
+                        await _userManager.UpdateAsync(cuser);
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        public async Task<bool> DeleteAsync(Guid logId)
         {
             var cuser = await GetCurrentUser();
             if (cuser != null)
@@ -77,12 +111,29 @@ namespace JobLogger.Models
                            where log.ApplicationUser.Id == uid
                            where log.Id == logId
                            select log;
-                foreach (var log in logs)
+                if (logs.Count() > 0)
                 {
-                    cuser.JobLogs.Remove(log);
+                    cuser.JobLogs.Remove(logs.First());
+                    await _userManager.UpdateAsync(cuser);
+                    return true;
                 }
-                await _userManager.UpdateAsync(cuser);
             }
+            return false;
+        }
+
+        public async Task<BaseLog> GetLogAsync(Guid logId)
+        {
+            var cuser = await GetCurrentUser();
+            if (cuser != null)
+            {
+                var uid = cuser.Id;
+                var logs = from log in _context.JobLogs
+                           where log.ApplicationUser.Id == uid
+                           where log.Id == logId
+                           select log;
+                return logs.First();
+            }
+            return null;
         }
     }
 }

@@ -6,28 +6,23 @@ using JobLogger.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Moq;
 
 namespace JobLoggerTests
 {
-    public class DummyRepo: ILogRepository
-    {
-        public async Task<IEnumerable<BaseLog>> JobLogsAsync()
-        {
-            var list = new List<BaseLog>();
-            list.Add(new ActivityLog());
-            return list;
-        }
-        public async Task AddAsync(BaseLog log)
-        {
-        }
-    }
     public class TestHomeController
     {
         [Fact]
-        public async void EnsureIndexGetsLogs()
+        public async void IndexGetsLogs()
         {
-            var repo = new DummyRepo();
-            var ctrl = new HomeController(repo);
+            // Setup repo mock that returns an list of one ActivityLog
+            var list = new List<BaseLog>();
+            list.Add(new ActivityLog());
+            var repo = new Mock<ILogRepository>();
+            repo.Setup(r => r.JobLogsAsync())
+                .Returns(Task.FromResult<IEnumerable<BaseLog>>(list));
+
+            var ctrl = new HomeController(repo.Object);
             var result = await ctrl.Index();
             Assert.IsType<ViewResult>(result);
             var view = (ViewResult)result;

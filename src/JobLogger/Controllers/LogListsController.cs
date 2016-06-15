@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using JobLogger.Models;
+using System.Net;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -21,15 +22,45 @@ namespace JobLogger.Controllers
         // GET: /<controller>/
         public IActionResult Index()
         {
-            return View();
+            // Maybe make this an admin only page with global log info?
+            HttpContext.Response.StatusCode = (int)HttpStatusCode.Forbidden;
+            ViewData["error"] = "Access Denied";
+            return View("error");
+
         }
 
         // GET: /LogLists/Week/{page}
         public async Task<IActionResult> Week(int Page)
         {
             // FIXME Create view model that extracts just dates for week
+            // FIXME Set ViewData["title"] to the week shown
             var model = await _logRepository.JobLogsAsync();
             return View(model);
+        }
+
+        // GET: /LogLists/Edit
+        public async Task<JsonResult> Edit(string target)
+        {
+            var logId = Guid.NewGuid();
+            if (Guid.TryParse(target, out logId))
+            {
+                var log = await _logRepository.GetLogAsync(logId);
+                return Json(new { success = true,
+                                  data = log });
+            }
+            return Json(new { success = false });
+        }
+
+        // POST: /LogLists/Edit
+        [HttpPost]
+        public async Task<JsonResult> Edit(BaseLog log)
+        {
+            var success = await _logRepository.UpdateAsync(log);
+            if (success)
+            {
+                return Json(new { success = true });
+            }
+            return Json(new { success = false });
         }
 
         // GET: /LogLists/Add
@@ -44,12 +75,13 @@ namespace JobLogger.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _logRepository.AddAsync(log);
-                return Json(new {good = true,
-                                 data = Json(log)
-                });
+                var added = await _logRepository.AddAsync(log);
+                if (added)
+                {
+                    return Json(new { success = true, data = log });
+                }
             }
-            return Json(new { good = false });
+            return Json(new { success = false });
         }
 
         // POST: /LogLists/AddContact
@@ -58,23 +90,27 @@ namespace JobLogger.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _logRepository.AddAsync(log);
-                return Json(new {success = true,
-                                 data = Json(log)
-                });
+                var added = await _logRepository.AddAsync(log);
+                if (added)
+                {
+                    return Json(new { success = true, data = log });
+                }
             }
             return Json(new { success = false });
         }
 
         // DELETE: /LogLists/delete
         [HttpDelete]
-        public async Task<JsonResult> Delete(String target)
+        public async Task<JsonResult> Delete(string target)
         {
             var logId = Guid.NewGuid();
             if (Guid.TryParse(target, out logId))
             {
-                await _logRepository.DeleteAsync(logId);
-                return Json(new { success = true });
+                var deleted = await _logRepository.DeleteAsync(logId);
+                if (deleted)
+                {
+                    return Json(new { success = true });
+                }
             }
             return Json(new { success = false });
         }
