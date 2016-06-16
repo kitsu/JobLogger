@@ -50,6 +50,7 @@
         <script src="~/lib/jquery/dist/jquery.js"></script>
         <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
         <script src="~/lib/knockout/dist/knockout.debug.js"></script>
+        <script src="~/lib/knockout.mapping/knockout.mapping-2.4.1.debug.js"></script>
         <script src="~/lib/moment/moment.js"></script>
         <script src="~/js/site.js" asp-append-version="true"></script>
     </environment>
@@ -65,6 +66,10 @@
         <script src="https://ajax.aspnetcdn.com/ajax/knockout/knockout-3.4.0.js"
                 asp-fallback-src="~/lib/knockout/dist/knockout.js"
                 asp-fallback-test="window.ko">
+        </script>
+        <script src="https://ajax.aspnetcdn.com/ajax/knockout.mapping/2.4.1/knockout.mapping.min.js"
+                asp-fallback-src="~/lib/knockout.mapping/knockout.mapping-2.4.1.js"
+                asp-fallback-test="window.ko.mapping">
         </script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js"
                 asp-fallback-src="~/lib/moment/moment.js"

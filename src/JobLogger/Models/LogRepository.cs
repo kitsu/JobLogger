@@ -106,6 +106,10 @@ namespace JobLogger.Models
             var cuser = await GetCurrentUser();
             if (cuser != null)
             {
+                if (cuser.JobLogs == null)
+                {
+                     cuser.JobLogs = new List<BaseLog>();
+                }
                 var uid = cuser.Id;
                 var logs = from log in _context.JobLogs
                            where log.ApplicationUser.Id == uid

@@ -7,7 +7,7 @@
 <div id="LogForms" class="tab-content">
     <!-- Activity form -->
     <div role="tabpanel" class="tab-pane active" id="Activity">
-        <form id="LogActivity" class="form-horizontal" data-bind="submit: postLog">
+        <form id="LogActivity" class="form-horizontal" data-bind="submit: addLog">
             <div class="form-group">
                 <label for="LogActDate" class="col-md-1 control-label">Date</label>
                 <div class="col-md-4">
@@ -41,7 +41,7 @@
     </div>
     <!-- Contact form -->
     <div role="tabpanel" class="tab-pane" id="Contact">
-        <form id="LogContact" class="form-horizontal" data-bind="submit: postLog">
+        <form id="LogContact" class="form-horizontal" data-bind="submit: addLog">
             <div class="form-group">
                 <label for="LogConDate" class="col-md-1 control-label">Date</label>
                 <div class="col-md-4">
@@ -147,14 +147,21 @@
 
 @section scripts
 {
-    <script src="~/scripts/AddForm.js" asp-append-version="true"></script>
+    <script src="~/scripts/LogModels.js" asp-append-version="true"></script>
+    <script src="~/scripts/RadioHandler.js" asp-append-version="true"></script>
     <script type="text/javascript">
         $(function () {
             // Wire up tabs
             $("li a").click(function (e) {
                 e.preventDefault();
                 $(this).tab('show');
-            })
-        })
+            });
+            // Setup all the models and bind them to the view
+            var date = moment().format("YYYY-MM-DD");
+            window.actModel = new ActLogModel(date);
+            window.conModel = new ConLogModel(date);
+            ko.applyBindings(actModel, $("#LogActivity")[0]);
+            ko.applyBindings(conModel, $("#LogContact")[0]);
+        });
     </script>
 }
