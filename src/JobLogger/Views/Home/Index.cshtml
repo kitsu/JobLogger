@@ -8,28 +8,51 @@
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 
+<br />
 @if (SignInManager.IsSignedIn(User))
 {
-    <br />
-    <div class="row">
-        <div class="panel panel-default col-md-6 col-md-offset-3">
-            <div class="panel-heading">
-                <h3 class="panel-title">@User.Identity.Name</h3>
-            </div>
+    @Html.Partial("_KoTemplates")
+    <div id="AddPanel" class="panel panel-default">
+        <div class="panel-heading" role="tab" id="AddHeading">
+            <h4 class="panel-title pull-left">
+                <a role="button" data-toggle="collapse" href="#AddPanelBody"
+                   aria-expanded="false" aria-controls="AddPanelBody"
+                   class="btn">
+                    &nbsp; Add Log
+                    <span class="glyphicon glyphicon-menu-down"></span>
+                </a>
+            </h4>
+            <div class="clearfix"></div>
+        </div>
+        <div id="AddPanelBody" class="panel-collapse collapse"
+             role="tabpanel" aria-labelledby="AddHeading">
             <div class="panel-body">
-                <div class="btn-group btn-group-justified" role="group" aria-label="...">
-                    <a class="btn btn-primary" asp-controller="LogLists"
-                       asp-action="Week"
-                       asp-route-id="1">
-                        View Logs <span class="badge">@Model.Count()</span>
-                    </a>
-                    <a class="btn btn-default" asp-controller="LogLists"
-                       asp-action="Add">
-                        Add Log
-                    </a>
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs" role="tablist">
+                    <li role="presentation" class="active"><a href="#Activity" aria-controls="Activity" role="tab" data-toggle="tab">Activity Log</a></li>
+                    <li role="presentation"><a href="#Contact" aria-controls="Contact" role="tab" data-toggle="tab">Contact Log</a></li>
+                </ul>
+                <!-- Tabs bodies -->
+                <div id="AddLogForms" class="tab-content">
+                    <!-- Activity form -->
+                    <div role="tabpanel" class="tab-pane active" id="Activity">
+                         <div data-bind="template: {name: 'LogActTemp', data: actModel}"></div>
+                    </div>
+                    <!-- Contact form -->
+                    <div role="tabpanel" class="tab-pane" id="Contact">
+                         <div data-bind="template: {name: 'LogConTemp', data: conModel}"></div>
+                    </div>
                 </div>
             </div>
         </div>
+    </div>
+    <div id="LogList">
+    <h4 class="text-center">
+        FIXME Add date range filter and search box
+        <br />
+        <span data-bind="text: Count"></span> Logs
+    </h4>
+        <div data-bind="template: {name: logTemplate, foreach: Logs}"></div>
     </div>
 }
 else
@@ -56,4 +79,29 @@ else
         user credentials will be deleted.</p>
     </div>
     </div>
+}
+
+@section scripts
+{
+@if (SignInManager.IsSignedIn(User))
+{
+    <script src="~/scripts/LogModels.js" asp-append-version="true"></script>
+    <script src="~/scripts/RadioHandler.js" asp-append-version="true"></script>
+    <script type="text/javascript">
+        $(function () {
+            // Wire up tabs
+            $("ul.nav-tabs li a").click(function (e) {
+                e.preventDefault();
+                $(this).tab('show');
+            });
+            // Bind add model to view
+            window.addModel = new AdditionModel()
+            ko.applyBindings(addModel, $("#AddLogForms")[0]);
+            // Bind list model to view
+            window.listModel = new ListModel()
+            $.getJSON("/LogLists").done(listModel.updateList)
+            ko.applyBindings(listModel, $("#LogList")[0]);
+        });
+    </script>
+}
 }

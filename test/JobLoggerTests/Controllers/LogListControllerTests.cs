@@ -36,6 +36,27 @@ namespace JobLoggerTests
         }
 
         [Fact]
+        public async void IndexProvidesLogList()
+        {
+            // Setup repo mock that returns an list of one ActivityLog
+            var list = new List<BaseLog>();
+            list.Add(new ActivityLog());
+            list.Add(new ActivityLog());
+            list.Add(new ActivityLog());
+            var repo = new Mock<ILogRepository>();
+            repo.Setup(r => r.JobLogsAsync())
+                .Returns(Task.FromResult<IEnumerable<BaseLog>>(list));
+
+            var ctrl = new LogListsController(repo.Object);
+            var result = await ctrl.Index();
+            Assert.IsType<JsonResult>(result);
+            dynamic model = result.Value;
+            Assert.True(model.success);
+            var data = (List<BaseLog>)model.data;
+            Assert.Equal(data.Count(), 3);
+        }
+
+        [Fact]
         public async void EditGetHandlesIds()
         {
             // Setup repo mock that returns an list of one ActivityLog

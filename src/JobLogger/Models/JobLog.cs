@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -9,12 +10,12 @@ namespace JobLogger.Models
 {
     public enum MethodType { Application, Interview, Inquery }
     public enum MeansType { Online, Mail, InPerson, Kiosk, Telephone, Fax }
-
     public abstract class BaseLog
     {
         public Guid Id { get; set; }
 
         // Reciprocal link to user data
+        [JsonIgnore]
         public virtual ApplicationUser ApplicationUser  { get; set; }
 
         [Required]

@@ -19,17 +19,15 @@ namespace JobLogger.Controllers
             _logRepository = logRepository;
         }
 
-        // GET: /<controller>/
-        public IActionResult Index()
+        // GET: /LogLists/
+        public async Task<JsonResult> Index()
         {
-            // Maybe make this an admin only page with global log info?
-            HttpContext.Response.StatusCode = (int)HttpStatusCode.Forbidden;
-            ViewData["error"] = "Access Denied";
-            return View("error");
-
+            var logs = await _logRepository.JobLogsAsync();
+            return Json(new { success = true,
+                              data = logs });
         }
 
-        // GET: /LogLists/Week/{page}
+        // GET: /LogLists/Week/{date}
         public async Task<IActionResult> Week(int Page)
         {
             // FIXME Create view model that extracts just dates for week
