@@ -9,7 +9,11 @@ var BaseLog = (function () {
         this.Id = ko.observable("");
         this.LogDate = ko.observable(date);
         this.Description = ko.observable("");
-        this.AddUrl = "";
+        this.Urls = {
+            Add: "",
+            Update: "",
+            Delete: "/LogLists/Delete/",
+        };
         this.Mapping = {};
         this.Callbacks = {
             Add: this.renderResult,
@@ -20,7 +24,7 @@ var BaseLog = (function () {
     BaseLog.prototype.addLog = function (form) {
         var data = ko.mapping.toJSON(this, this.Mapping);
         var AjaxOptions = {
-            url: this.AddUrl,
+            url: this.Urls.Add,
             type: "POST",
             contentType: "application/json",
             processData: false,
@@ -32,7 +36,7 @@ var BaseLog = (function () {
     BaseLog.prototype.updateLog = function (form) {
         var data = ko.mapping.toJSON(this, this.Mapping);
         var AjaxOptions = {
-            url: "/LogLists/Edit",
+            url: this.Urls.Update + "/" + this.Id(),
             type: "POST",
             contentType: "application/json",
             processData: false,
@@ -43,7 +47,7 @@ var BaseLog = (function () {
     BaseLog.prototype.deleteLog = function (button) {
         var data = this.Id();
         var AjaxOptions = {
-            url: "/LogLists/Delete/",
+            url: this.Urls.Delete,
             type: "DELETE",
             data: { "target": data }
         };
@@ -58,23 +62,31 @@ var BaseLog = (function () {
 var ActLogModel = (function (_super) {
     __extends(ActLogModel, _super);
     function ActLogModel(date) {
+        var _this = this;
         if (date === void 0) { date = ""; }
         _super.call(this, date);
+        this.toggleEdit = function () {
+            _this.Edit(!_this.Edit());
+        };
         this.Location = ko.observable("");
-        this.AddUrl = "/LogLists/AddActivity";
+        // Subclass state
+        this.Edit = ko.observable(false);
+        this.Urls.Add = "/LogLists/AddActivity";
+        this.Urls.Update = "/LogLists/EditActivity";
         this.Mapping = {
-            "ignore": ["Mapping", "AddUrl", "Callbacks", "Id",
-                "addLog", "updateLog", "deleteLog", "renderResult"]
+            "ignore": ["Mapping", "Urls", "Callbacks", "Edit", "Id",
+                "addLog", "updateLog", "deleteLog", "renderResult",
+                "toggleEdit"]
         };
     }
     return ActLogModel;
 }(BaseLog));
-var ConMeans = {
+var ConMethods = {
     "0": "Application",
     "1": "Interview",
     "2": "Inquery",
 };
-var ConMethods = {
+var ConMeans = {
     "0": "Online",
     "1": "Mail",
     "2": "InPerson",
@@ -85,9 +97,13 @@ var ConMethods = {
 var ConLogModel = (function (_super) {
     __extends(ConLogModel, _super);
     function ConLogModel(date, state) {
+        var _this = this;
         if (date === void 0) { date = ""; }
         if (state === void 0) { state = "Wa"; }
         _super.call(this, date);
+        this.toggleEdit = function () {
+            _this.Edit(!_this.Edit());
+        };
         this.MethodType = ko.observable("0");
         this.MeansType = ko.observable("0");
         this.Employer = ko.observable("");
@@ -96,12 +112,16 @@ var ConLogModel = (function (_super) {
         this.Address = ko.observable("");
         this.City = ko.observable("");
         this.State = ko.observable(state);
-        this.AddUrl = "/LogLists/AddContact";
+        // Subclass state
+        this.Edit = ko.observable(false);
+        this.Urls.Add = "/LogLists/AddContact";
+        this.Urls.Update = "/LogLists/EditContact";
         // This is used to exclude members from ko.toJSON
         this.Mapping = {
-            "ignore": ["Mapping", "AddUrl", "Callbacks", "Id",
+            "ignore": ["Mapping", "Urls", "Callbacks", "Edit", "Id",
                 "addLog", "updateLog", "deleteLog", "renderResult",
-                "addressPrompt", "contactPrompt", "methodName", "meansName"]
+                "addressPrompt", "contactPrompt", "methodName",
+                "meansName", "toggleEdit"]
         };
     }
     ConLogModel.prototype.addressPrompt = function () {
@@ -114,11 +134,13 @@ var ConLogModel = (function (_super) {
             return "Name [E-mail]";
         return "Name/Booth";
     };
-    ConLogModel.prototype.meansName = function (means) {
-        return ConMeans[this.MeansType()];
+    ConLogModel.prototype.meansName = function () {
+        var means = this.MeansType();
+        return ConMeans[means];
     };
-    ConLogModel.prototype.methodName = function (method) {
-        return ConMethods[this.MethodType()];
+    ConLogModel.prototype.methodName = function () {
+        var method = this.MethodType();
+        return ConMethods[method];
     };
     return ConLogModel;
 }(BaseLog));
@@ -136,10 +158,16 @@ var AdditionModel = (function () {
         if (result.success) {
             $("#LogList").prepend('<div class="alert alert-info">Activity log added!</div>');
         }
+        else {
+            console.log("Couldn't add log!");
+        }
     };
     AdditionModel.prototype.onConSuccess = function (result) {
         if (result.success) {
             $("#LogList").prepend('<div class="alert alert-info">Contact log added!</div>');
+        }
+        else {
+            console.log("Couldn't add log!");
         }
     };
     return AdditionModel;
@@ -166,13 +194,26 @@ var ListModel = (function () {
     }
     ListModel.prototype.addAct = function (log) {
         var _this = this;
+        // Build new model for this log
         var actModel = new ActLogModel(log.LogDate.slice(0, 10));
+        // Setup callbacks
         actModel.Callbacks.Delete = function (result) {
             if (result.success) {
-                console.log("Removing " + actModel.Id() + " from list!");
                 _this.Logs.remove(actModel);
             }
+            else {
+                console.log("Couldn't delete log!");
+            }
         };
+        actModel.Callbacks.Update = function (result) {
+            if (result.success) {
+                actModel.Edit(false);
+            }
+            else {
+                console.log("Couldn't update log!");
+            }
+        };
+        // Manually initialize member data
         actModel.Id(log.Id);
         actModel.Description(log.Description);
         actModel.Location(log.Location);
@@ -180,12 +221,30 @@ var ListModel = (function () {
     };
     ListModel.prototype.addCon = function (log) {
         var _this = this;
+        // Build new model for this log
         var conModel = new ConLogModel(log.LogDate.slice(0, 10));
-        conModel.Callbacks.Delete = function () { _this.Logs.remove(conModel); };
+        // Setup callbacks
+        conModel.Callbacks.Delete = function (result) {
+            if (result.success) {
+                _this.Logs.remove(conModel);
+            }
+            else {
+                console.log("Couldn't delete log!");
+            }
+        };
+        conModel.Callbacks.Update = function (result) {
+            if (result.success) {
+                conModel.Edit(false);
+            }
+            else {
+                console.log("Couldn't update log!");
+            }
+        };
+        // Manually initialize member data
         conModel.Id(log.Id);
         conModel.Description(log.Description);
-        conModel.MethodType(log.MethodType);
-        conModel.MeansType(log.MeansType);
+        conModel.MethodType(log.MethodType.toString());
+        conModel.MeansType(log.MeansType.toString());
         conModel.Employer(log.Employer);
         conModel.Contact(log.Contact);
         conModel.Phone(log.Phone);
@@ -199,6 +258,12 @@ var ListModel = (function () {
             return 'ActLogTemp';
         }
         return 'ConLogTemp';
+    };
+    ListModel.prototype.addTemplate = function (log) {
+        if (log instanceof ActLogModel) {
+            return 'LogActTemp';
+        }
+        return 'LogConTemp';
     };
     return ListModel;
 }());

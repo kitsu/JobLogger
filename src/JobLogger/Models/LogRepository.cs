@@ -91,7 +91,10 @@ namespace JobLogger.Models
                     {
                         foreach (var prop in SrcType.GetProperties())
                         {
-                            prop.SetValue(exist, prop.GetValue(updated, null), null);
+                            if (prop.Name != "ApplicationUser")
+                            {
+                                prop.SetValue(exist, prop.GetValue(updated, null), null);
+                            }
                         }
                         await _userManager.UpdateAsync(cuser);
                         return true;

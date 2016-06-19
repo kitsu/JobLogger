@@ -28,12 +28,12 @@ namespace JobLogger.Controllers
         }
 
         // GET: /LogLists/Week/{date}
-        public async Task<IActionResult> Week(int Page)
+        public async Task<JsonResult> Week(int Page)
         {
             // FIXME Create view model that extracts just dates for week
             // FIXME Set ViewData["title"] to the week shown
             var model = await _logRepository.JobLogsAsync();
-            return View(model);
+            return Json(model);
         }
 
         // GET: /LogLists/Edit
@@ -49,22 +49,36 @@ namespace JobLogger.Controllers
             return Json(new { success = false });
         }
 
-        // POST: /LogLists/Edit
+        // POST: /LogLists/EditActivity/{id}
         [HttpPost]
-        public async Task<JsonResult> Edit(BaseLog log)
+        public async Task<JsonResult> EditActivity(Guid Id, [FromBody] ActivityLog log)
         {
-            var success = await _logRepository.UpdateAsync(log);
-            if (success)
+            if (ModelState.IsValid)
             {
-                return Json(new { success = true });
+                log.Id = Id;
+                var success = await _logRepository.UpdateAsync(log);
+                if (success)
+                {
+                    return Json(new { success = true });
+                }
             }
             return Json(new { success = false });
         }
 
-        // GET: /LogLists/Add
-        public IActionResult Add()
+        // POST: /LogLists/EditContact/{id}
+        [HttpPost]
+        public async Task<JsonResult> EditContact(Guid Id, [FromBody] ContactLog log)
         {
-            return View();
+            if (ModelState.IsValid)
+            {
+                log.Id = Id;
+                var success = await _logRepository.UpdateAsync(log);
+                if (success)
+                {
+                    return Json(new { success = true });
+                }
+            }
+            return Json(new { success = false });
         }
 
         // POST: /LogLists/AddActivity

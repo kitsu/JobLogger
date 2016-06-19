@@ -12,7 +12,7 @@ abstract class BaseLog implements ILogModel {
     Id: KnockoutObservable<string>;
     LogDate: KnockoutObservable<string>;
     Description: KnockoutObservable<string>;
-    AddUrl: string;
+    Urls: any;
     Mapping: any;
     Callbacks: any;
 
@@ -20,7 +20,11 @@ abstract class BaseLog implements ILogModel {
         this.Id = ko.observable("");
         this.LogDate = ko.observable(date);
         this.Description = ko.observable("");
-        this.AddUrl = "";
+        this.Urls = {
+            Add: "",
+            Update: "",
+            Delete: "/LogLists/Delete/",
+        };
         this.Mapping = {};
         this.Callbacks = {
             Add: this.renderResult,
@@ -32,7 +36,7 @@ abstract class BaseLog implements ILogModel {
     addLog(form: Element): void {
         let data: string = ko.mapping.toJSON(this, this.Mapping);
         let AjaxOptions: any = {
-            url: this.AddUrl,
+            url: this.Urls.Add,
             type: "POST",
             contentType: "application/json",
             processData: false,
@@ -45,7 +49,7 @@ abstract class BaseLog implements ILogModel {
     updateLog(form: Element): void {
         let data: string = ko.mapping.toJSON(this, this.Mapping);
         let AjaxOptions: any = {
-            url: "/LogLists/Edit",
+            url: this.Urls.Update + "/" + this.Id(),
             type: "POST",
             contentType: "application/json",
             processData: false,
@@ -57,7 +61,7 @@ abstract class BaseLog implements ILogModel {
     deleteLog(button: Element): void {
         let data: string = this.Id();
         let AjaxOptions: any = {
-            url: "/LogLists/Delete/",
+            url: this.Urls.Delete,
             type: "DELETE",
             data: { "target": data }
         };
@@ -73,25 +77,35 @@ abstract class BaseLog implements ILogModel {
 class ActLogModel extends BaseLog implements ILogModel {
     // This is used to exclude members from ko.toJSON
     Location: KnockoutObservable<string>;
+    // Flag set when editing this log
+    Edit: KnockoutObservable<boolean>;
 
     constructor(date: string = "") {
         super(date);
         this.Location = ko.observable("");
-        this.AddUrl =  "/LogLists/AddActivity";
+        // Subclass state
+        this.Edit = ko.observable(false);
+        this.Urls.Add =  "/LogLists/AddActivity";
+        this.Urls.Update =  "/LogLists/EditActivity";
         this.Mapping = {
-            "ignore": ["Mapping", "AddUrl", "Callbacks", "Id",
-                   "addLog", "updateLog", "deleteLog", "renderResult"]
+            "ignore": ["Mapping", "Urls", "Callbacks", "Edit", "Id",
+                       "addLog", "updateLog", "deleteLog", "renderResult",
+                       "toggleEdit"]
         };
+    }
+
+    toggleEdit = (): void => {
+        this.Edit(!this.Edit());
     }
 }
 
-let ConMeans: any = {
+let ConMethods: any = {
     "0": "Application",
     "1": "Interview",
     "2": "Inquery",
 }
 
-let ConMethods: any = {
+let ConMeans: any = {
     "0": "Online",
     "1": "Mail",
     "2": "InPerson",
@@ -109,6 +123,8 @@ class ConLogModel extends BaseLog implements ILogModel {
     Address: KnockoutObservable<string>;
     City: KnockoutObservable<string>;
     State: KnockoutObservable<string>;
+    // Flag set when editing this log
+    Edit: KnockoutObservable<boolean>;
 
     constructor(date: string = "", state: string = "Wa") {
         super(date);
@@ -120,13 +136,21 @@ class ConLogModel extends BaseLog implements ILogModel {
         this.Address = ko.observable("");
         this.City = ko.observable("");
         this.State = ko.observable(state);
-        this.AddUrl =  "/LogLists/AddContact";
+        // Subclass state
+        this.Edit = ko.observable(false);
+        this.Urls.Add =  "/LogLists/AddContact";
+        this.Urls.Update =  "/LogLists/EditContact";
         // This is used to exclude members from ko.toJSON
         this.Mapping = {
-            "ignore": ["Mapping", "AddUrl", "Callbacks", "Id",
-                "addLog", "updateLog", "deleteLog", "renderResult",
-                "addressPrompt", "contactPrompt", "methodName", "meansName"]
+            "ignore": ["Mapping", "Urls", "Callbacks", "Edit", "Id",
+                       "addLog", "updateLog", "deleteLog", "renderResult",
+                        "addressPrompt", "contactPrompt", "methodName",
+                        "meansName", "toggleEdit"]
         };
+    }
+
+    toggleEdit = (): void => {
+        this.Edit(!this.Edit());
     }
 
     addressPrompt(): string {
@@ -139,12 +163,14 @@ class ConLogModel extends BaseLog implements ILogModel {
         return "Name/Booth";
     }
 
-    meansName(means: string): string {
-        return ConMeans[this.MeansType()];
+    meansName(): string {
+        let means: string = this.MeansType();
+        return ConMeans[means];
     }
 
-    methodName(method: string): string {
-        return ConMethods[this.MethodType()];
+    methodName(): string {
+        let method: string = this.MethodType();
+        return ConMethods[method];
     }
 }
 
@@ -165,12 +191,16 @@ class AdditionModel {
     onActSuccess(result: any): void {
         if (result.success) {
             $("#LogList").prepend('<div class="alert alert-info">Activity log added!</div>');
+        } else {
+            console.log("Couldn't add log!");
         }
     }
 
     onConSuccess(result: any): void {
         if (result.success) {
             $("#LogList").prepend('<div class="alert alert-info">Contact log added!</div>');
+        } else {
+            console.log("Couldn't add log!");
         }
     }
 }
@@ -198,13 +228,24 @@ class ListModel {
     }
 
     addAct(log: any): void {
+        // Build new model for this log
         let actModel = new ActLogModel(log.LogDate.slice(0, 10));
+        // Setup callbacks
         actModel.Callbacks.Delete = (result: any) => {
             if (result.success) {
-                console.log("Removing " + actModel.Id() + " from list!");
                 this.Logs.remove(actModel);
+            } else {
+                console.log("Couldn't delete log!");
             }
         };
+        actModel.Callbacks.Update = (result: any) => {
+            if (result.success) {
+                actModel.Edit(false)
+            } else {
+                console.log("Couldn't update log!");
+            }
+        };
+        // Manually initialize member data
         actModel.Id(log.Id);
         actModel.Description(log.Description);
         actModel.Location(log.Location);
@@ -212,12 +253,28 @@ class ListModel {
     }
 
     addCon(log: any): void {
+        // Build new model for this log
         let conModel = new ConLogModel(log.LogDate.slice(0, 10));
-        conModel.Callbacks.Delete = () => { this.Logs.remove(conModel) };
+        // Setup callbacks
+        conModel.Callbacks.Delete = (result: any) => {
+            if (result.success) {
+                this.Logs.remove(conModel)
+            } else {
+                console.log("Couldn't delete log!");
+            }
+        };
+        conModel.Callbacks.Update = (result: any) => {
+            if (result.success) {
+                conModel.Edit(false)
+            } else {
+                console.log("Couldn't update log!");
+            }
+        };
+        // Manually initialize member data
         conModel.Id(log.Id);
         conModel.Description(log.Description);
-        conModel.MethodType(log.MethodType);
-        conModel.MeansType(log.MeansType);
+        conModel.MethodType(log.MethodType.toString());
+        conModel.MeansType(log.MeansType.toString());
         conModel.Employer(log.Employer);
         conModel.Contact(log.Contact);
         conModel.Phone(log.Phone);
@@ -232,5 +289,12 @@ class ListModel {
             return 'ActLogTemp';
         }
         return 'ConLogTemp';
+    }
+
+    addTemplate(log: ActLogModel | ConLogModel): string {
+        if (log instanceof ActLogModel) {
+            return 'LogActTemp';
+        }
+        return 'LogConTemp';
     }
 }

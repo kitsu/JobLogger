@@ -81,7 +81,7 @@ namespace JobLoggerTests
         }
 
         [Fact]
-        public async void EditPostSucceedsOnUpdate()
+        public async void EditActivityPostSucceedsOnUpdate()
         {
             // Setup repo mock that accepts one Id but not another
             var good = new ActivityLog();
@@ -94,22 +94,54 @@ namespace JobLoggerTests
 
             // Good guid test
             var ctrl = new LogListsController(repo.Object);
-            var result = await ctrl.Edit(good);
+            var result = await ctrl.EditActivity(good.Id, good);
             Assert.IsType<JsonResult>(result);
             dynamic model = result.Value;
             Assert.True(model.success);
 
             // Bad guid test
-            result = await ctrl.Edit(bad);
+            result = await ctrl.EditActivity(bad.Id, bad);
+            Assert.IsType<JsonResult>(result);
+            model = result.Value;
+            Assert.False(model.success);
+
+            // No guid test
+            result = await ctrl.EditActivity(Guid.Empty, bad);
             Assert.IsType<JsonResult>(result);
             model = result.Value;
             Assert.False(model.success);
         }
 
         [Fact]
-        public void AddGetMumble()
+        public async void EditContactPostSucceedsOnUpdate()
         {
-            // GET Add has no logic
+            // Setup repo mock that accepts one Id but not another
+            var good = new ContactLog();
+            good.Id = new Guid();
+            var bad = new ContactLog();
+            bad.Id = new Guid();
+            var repo = new Mock<ILogRepository>();
+            repo.Setup(r => r.UpdateAsync(good)).Returns(Task.FromResult(true));
+            repo.Setup(r => r.UpdateAsync(bad)).Returns(Task.FromResult(false));
+
+            // Good guid test
+            var ctrl = new LogListsController(repo.Object);
+            var result = await ctrl.EditContact(good.Id, good);
+            Assert.IsType<JsonResult>(result);
+            dynamic model = result.Value;
+            Assert.True(model.success);
+
+            // Bad guid test
+            result = await ctrl.EditContact(bad.Id, bad);
+            Assert.IsType<JsonResult>(result);
+            model = result.Value;
+            Assert.False(model.success);
+
+            // No guid test
+            result = await ctrl.EditContact(Guid.Empty, bad);
+            Assert.IsType<JsonResult>(result);
+            model = result.Value;
+            Assert.False(model.success);
         }
 
         [Fact]

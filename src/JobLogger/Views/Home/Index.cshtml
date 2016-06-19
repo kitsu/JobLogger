@@ -36,11 +36,19 @@
                 <div id="AddLogForms" class="tab-content">
                     <!-- Activity form -->
                     <div role="tabpanel" class="tab-pane active" id="Activity">
-                         <div data-bind="template: {name: 'LogActTemp', data: actModel}"></div>
+                        <form class="form-horizontal" data-bind="submit: actModel.addLog.bind(actModel)">
+                            <div data-bind="template: {name: 'LogActTemp',
+                                                       data: {actionName: 'Add Log',
+                                                              model: actModel}}"></div>
+                        </form>
                     </div>
                     <!-- Contact form -->
                     <div role="tabpanel" class="tab-pane" id="Contact">
-                         <div data-bind="template: {name: 'LogConTemp', data: conModel}"></div>
+                        <form class="form-horizontal" data-bind="submit: conModel.addLog.bind(conModel)">
+                            <div data-bind="template: {name: 'LogConTemp',
+                                                       data: {actionName: 'Add Log',
+                                                              model: conModel}}"></div>
+                        </form>
                     </div>
                 </div>
             </div>
