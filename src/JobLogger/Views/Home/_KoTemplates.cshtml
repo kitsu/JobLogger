@@ -158,9 +158,9 @@
 
 <script type="text/html" id="DeletePanel">
     <div class="btn-group pull-right" data-toggle="buttons">
-            <label class="btn btn-sm btn-default active"
-                   data-bind="css: {'active': Edit},
-                          click: toggleEdit">
+            <label class="btn btn-sm btn-default"
+                   data-bind="css: {'active': !Edit},
+                              click: toggleEdit">
                 <input type="checkbox" checked data-bind="checked: Edit" /> Edit
             </label>
         <a class="btn btn-sm btn-danger" role="button"
