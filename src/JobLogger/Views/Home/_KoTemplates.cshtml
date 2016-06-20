@@ -173,7 +173,7 @@
     <br />
     <!-- ko if: Edit -->
     <form class="form-horizontal" data-bind="submit: updateLog.bind($data)">
-        <div data-bind="template: {name: $parent.addTemplate($data),
+        <div data-bind="template: {name: $parent.editTemplate($data),
                                    data: {actionName: 'Update Log',
                                           model: $data}}"></div>
     </form>

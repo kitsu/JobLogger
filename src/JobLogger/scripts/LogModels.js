@@ -3,6 +3,10 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
+function popoverAlert(notice) {
+    $("#AlertInfo").text(notice);
+    $("#AddAlertInfo").fadeIn(150).delay(1000).fadeOut(250);
+}
 var BaseLog = (function () {
     function BaseLog(date) {
         if (date === void 0) { date = ""; }
@@ -99,7 +103,7 @@ var ConLogModel = (function (_super) {
     function ConLogModel(date, state) {
         var _this = this;
         if (date === void 0) { date = ""; }
-        if (state === void 0) { state = "Wa"; }
+        if (state === void 0) { state = "WA"; }
         _super.call(this, date);
         this.toggleEdit = function () {
             _this.Edit(!_this.Edit());
@@ -146,6 +150,31 @@ var ConLogModel = (function (_super) {
 }(BaseLog));
 var AdditionModel = (function () {
     function AdditionModel() {
+        var _this = this;
+        this.onActSuccess = function (result) {
+            if (result.success) {
+                popoverAlert("Added Activity!");
+                if (window.hasOwnProperty("listModel")) {
+                    listModel.addAct(result.data);
+                    _this.clearActModel();
+                }
+            }
+            else {
+                console.log("Couldn't add log!");
+            }
+        };
+        this.onConSuccess = function (result) {
+            if (result.success) {
+                popoverAlert("Added Contact!");
+                if (window.hasOwnProperty("listModel")) {
+                    listModel.addCon(result.data);
+                    _this.clearConModel();
+                }
+            }
+            else {
+                console.log("Couldn't add log!");
+            }
+        };
         var date = moment().format("YYYY-MM-DD");
         // Setup child models
         this.actModel = new ActLogModel(date);
@@ -154,21 +183,21 @@ var AdditionModel = (function () {
         this.actModel.Callbacks.Add = this.onActSuccess;
         this.conModel.Callbacks.Add = this.onConSuccess;
     }
-    AdditionModel.prototype.onActSuccess = function (result) {
-        if (result.success) {
-            $("#LogList").prepend('<div class="alert alert-info">Activity log added!</div>');
-        }
-        else {
-            console.log("Couldn't add log!");
-        }
+    AdditionModel.prototype.clearActModel = function () {
+        var model = this.actModel;
+        model.Location("");
+        model.Description("");
     };
-    AdditionModel.prototype.onConSuccess = function (result) {
-        if (result.success) {
-            $("#LogList").prepend('<div class="alert alert-info">Contact log added!</div>');
-        }
-        else {
-            console.log("Couldn't add log!");
-        }
+    AdditionModel.prototype.clearConModel = function () {
+        var model = this.conModel;
+        model.MethodType("0");
+        model.MeansType("0");
+        model.Employer("");
+        model.Contact("");
+        model.Phone("");
+        model.Address("");
+        model.City("");
+        //model.State("WA");
     };
     return AdditionModel;
 }());
@@ -217,7 +246,7 @@ var ListModel = (function () {
         actModel.Id(log.Id);
         actModel.Description(log.Description);
         actModel.Location(log.Location);
-        this.Logs.push(actModel);
+        this.Logs.unshift(actModel);
     };
     ListModel.prototype.addCon = function (log) {
         var _this = this;
@@ -251,7 +280,7 @@ var ListModel = (function () {
         conModel.Address(log.Address);
         conModel.City(log.City);
         conModel.State(log.State);
-        this.Logs.push(conModel);
+        this.Logs.unshift(conModel);
     };
     ListModel.prototype.logTemplate = function (log) {
         if (log instanceof ActLogModel) {
@@ -259,7 +288,7 @@ var ListModel = (function () {
         }
         return 'ConLogTemp';
     };
-    ListModel.prototype.addTemplate = function (log) {
+    ListModel.prototype.editTemplate = function (log) {
         if (log instanceof ActLogModel) {
             return 'LogActTemp';
         }

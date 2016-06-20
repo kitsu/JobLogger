@@ -1,4 +1,12 @@
-﻿
+﻿// Declaration of model instances created on page load
+declare var addModel: AdditionModel;
+declare var listModel: ListModel;
+
+function popoverAlert(notice: string): void {
+    $("#AlertInfo").text(notice);
+    $("#AddAlertInfo").fadeIn(150).delay(1000).fadeOut(250);
+}
+
 interface ILogModel {
     Id: KnockoutObservable<string>;
     LogDate: KnockoutObservable<string>;
@@ -126,7 +134,7 @@ class ConLogModel extends BaseLog implements ILogModel {
     // Flag set when editing this log
     Edit: KnockoutObservable<boolean>;
 
-    constructor(date: string = "", state: string = "Wa") {
+    constructor(date: string = "", state: string = "WA") {
         super(date);
         this.MethodType = ko.observable("0");
         this.MeansType = ko.observable("0");
@@ -188,17 +196,43 @@ class AdditionModel {
         this.conModel.Callbacks.Add = this.onConSuccess
     }
 
-    onActSuccess(result: any): void {
+    clearActModel(): void {
+        let model = this.actModel;
+        model.Location("");
+        model.Description("");
+    }
+
+    clearConModel(): void {
+        let model = this.conModel;
+        model.MethodType("0");
+        model.MeansType("0");
+        model.Employer("");
+        model.Contact("");
+        model.Phone ("");
+        model.Address("");
+        model.City("");
+        //model.State("WA");
+    }
+
+    onActSuccess = (result: any): void => {
         if (result.success) {
-            $("#LogList").prepend('<div class="alert alert-info">Activity log added!</div>');
+            popoverAlert("Added Activity!");
+            if (window.hasOwnProperty("listModel")) {
+                listModel.addAct(result.data);
+                this.clearActModel();
+            }
         } else {
             console.log("Couldn't add log!");
         }
     }
 
-    onConSuccess(result: any): void {
+    onConSuccess = (result: any): void => {
         if (result.success) {
-            $("#LogList").prepend('<div class="alert alert-info">Contact log added!</div>');
+            popoverAlert("Added Contact!");
+            if (window.hasOwnProperty("listModel")) {
+                listModel.addCon(result.data);
+                this.clearConModel();
+            }
         } else {
             console.log("Couldn't add log!");
         }
@@ -216,7 +250,7 @@ class ListModel {
 
     updateList = (result: any): void => {
         if (result.success === true) {
-            console.log("Got " + result.data.length + " Logs!");
+            console.log(`Got ${result.data.length} Logs!`);
             for (let log of result.data) {
                 if (log.hasOwnProperty("Location")) {
                     this.addAct(log);
@@ -249,7 +283,7 @@ class ListModel {
         actModel.Id(log.Id);
         actModel.Description(log.Description);
         actModel.Location(log.Location);
-        this.Logs.push(actModel);
+        this.Logs.unshift(actModel);
     }
 
     addCon(log: any): void {
@@ -281,7 +315,7 @@ class ListModel {
         conModel.Address(log.Address);
         conModel.City(log.City);
         conModel.State(log.State);
-        this.Logs.push(conModel);
+        this.Logs.unshift(conModel);
     }
 
     logTemplate(log: ActLogModel | ConLogModel): string {
@@ -291,7 +325,7 @@ class ListModel {
         return 'ConLogTemp';
     }
 
-    addTemplate(log: ActLogModel | ConLogModel): string {
+    editTemplate(log: ActLogModel | ConLogModel): string {
         if (log instanceof ActLogModel) {
             return 'LogActTemp';
         }

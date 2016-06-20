@@ -33,7 +33,7 @@ I intend to deploy this on Azure, but it is still early days.
 
 - [ ] Fix edit toggle button not showing state (custom pseudo button?).
 - [ ] Add LogRepo unittests (requires mocking many things).
-- [ ] Replace "Add Succeeded" alert with addition of new log to list.
+- [x] Replace "Add Succeeded" alert with addition of new log to list.
 - [ ] Add filter by date range (maybe just "Week of The XX"?).
 - [ ] Add basic log search ability - text match against string fields.
 - [ ] Add advanced log search ability - search by type, flags, specific field match.

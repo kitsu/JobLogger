@@ -26,6 +26,13 @@
         </div>
         <div id="AddPanelBody" class="panel-collapse collapse"
              role="tabpanel" aria-labelledby="AddHeading">
+            <div style="position: relative">
+                <div id="AddAlertInfo" class="temp-notice alert alert-info">
+                    <div class="alert alert-info">
+                        <h4 id="AlertInfo" class="text-center">Info Alert!</h4>
+                    </div>
+                </div>
+            </div>
             <div class="panel-body">
                 <!-- Nav tabs -->
                 <ul class="nav nav-tabs" role="tablist">
@@ -55,11 +62,11 @@
         </div>
     </div>
     <div id="LogList">
-    <h4 class="text-center">
-        FIXME Add date range filter and search box
-        <br />
-        <span data-bind="text: Count"></span> Logs
-    </h4>
+        <h4 class="text-center">
+            FIXME Add date range filter and search box
+            <br />
+            <span data-bind="text: Count"></span> Logs
+        </h4>
         <div data-bind="template: {name: logTemplate, foreach: Logs}"></div>
     </div>
 }

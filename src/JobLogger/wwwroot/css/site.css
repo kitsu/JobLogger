@@ -87,3 +87,14 @@ pre {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+/* Notification pop-over in add panel */
+.temp-notice {
+    position: absolute;
+    top: 70px;
+    padding-top: 10%;
+    padding-bottom: 5%;
+    width: 100%;
+    z-index: 101;
+    display: none;
+}
