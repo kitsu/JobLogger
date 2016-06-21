@@ -1,12 +1,10 @@
-﻿@model IEnumerable<BaseLog>
-@{
+﻿@{
     ViewData["Title"] = "Index";
 }
 @using Microsoft.AspNetCore.Identity
 @using JobLogger.Models
 
 @inject SignInManager<ApplicationUser> SignInManager
-@inject UserManager<ApplicationUser> UserManager
 
 <br />
 @if (SignInManager.IsSignedIn(User))
@@ -90,7 +88,7 @@ else
         <p>First <a asp-controller="Account" asp-action="Register">Register</a>
         an account using either your email and a password or another
         identity provider. Your email will only be used for identification,
-        or to notify you of any changes to the service or your account.</p>
+        and to notify you of any changes to the service or your account.</p>
         <p>You can also close your account at any time and all your logs and
         user credentials will be deleted.</p>
     </div>
