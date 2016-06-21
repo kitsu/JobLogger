@@ -12,6 +12,7 @@
 @if (SignInManager.IsSignedIn(User))
 {
     @Html.Partial("_KoTemplates")
+    <form id="aspaft" asp-antiforgery="true" style="display: none"></form>
     <div id="AddPanel" class="panel panel-default">
         <div class="panel-heading" role="tab" id="AddHeading">
             <h4 class="panel-title pull-left">

@@ -30,6 +30,9 @@ var BaseLog = (function () {
         var AjaxOptions = {
             url: this.Urls.Add,
             type: "POST",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("RequestVerificationToken", $("#aspaft input").first().val());
+            },
             contentType: "application/json",
             processData: false,
             data: data,
@@ -42,6 +45,9 @@ var BaseLog = (function () {
         var AjaxOptions = {
             url: this.Urls.Update + "/" + this.Id(),
             type: "POST",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("RequestVerificationToken", $("#aspaft input").first().val());
+            },
             contentType: "application/json",
             processData: false,
             data: data,
@@ -53,6 +59,9 @@ var BaseLog = (function () {
         var AjaxOptions = {
             url: this.Urls.Delete,
             type: "DELETE",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("RequestVerificationToken", $("#aspaft input").first().val());
+            },
             data: { "target": data }
         };
         console.log("Deleting: ", data);

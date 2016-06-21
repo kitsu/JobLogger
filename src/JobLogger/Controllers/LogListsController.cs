@@ -51,6 +51,7 @@ namespace JobLogger.Controllers
 
         // POST: /LogLists/EditActivity/{id}
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<JsonResult> EditActivity(Guid Id, [FromBody] ActivityLog log)
         {
             if (ModelState.IsValid)
@@ -67,6 +68,7 @@ namespace JobLogger.Controllers
 
         // POST: /LogLists/EditContact/{id}
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<JsonResult> EditContact(Guid Id, [FromBody] ContactLog log)
         {
             if (ModelState.IsValid)
@@ -83,6 +85,7 @@ namespace JobLogger.Controllers
 
         // POST: /LogLists/AddActivity
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<JsonResult> AddActivity([FromBody] ActivityLog log)
         {
             if (ModelState.IsValid)
@@ -98,6 +101,7 @@ namespace JobLogger.Controllers
 
         // POST: /LogLists/AddContact
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<JsonResult> AddContact([FromBody] ContactLog log)
         {
             if (ModelState.IsValid)
@@ -113,6 +117,7 @@ namespace JobLogger.Controllers
 
         // DELETE: /LogLists/delete
         [HttpDelete]
+        [ValidateAntiForgeryToken]
         public async Task<JsonResult> Delete(string target)
         {
             var logId = Guid.NewGuid();
