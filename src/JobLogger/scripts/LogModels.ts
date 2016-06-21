@@ -119,13 +119,13 @@ class ActLogModel extends BaseLog implements ILogModel {
     }
 }
 
-let ConMethods: any = {
+let ContactType: any = {
     "0": "Application",
     "1": "Interview",
     "2": "Inquery",
 }
 
-let ConMeans: any = {
+let ContactMeans: any = {
     "0": "Online",
     "1": "Mail",
     "2": "InPerson",
@@ -135,8 +135,8 @@ let ConMeans: any = {
 }
 
 class ConLogModel extends BaseLog implements ILogModel {
-    MethodType: KnockoutObservable<string>;
-    MeansType: KnockoutObservable<string>;
+    ContactType: KnockoutObservable<string>;
+    ContactMeans: KnockoutObservable<string>;
     Employer: KnockoutObservable<string>;
     Contact: KnockoutObservable<string>;
     Phone: KnockoutObservable<string>;
@@ -148,8 +148,8 @@ class ConLogModel extends BaseLog implements ILogModel {
 
     constructor(date: string = "", state: string = "WA") {
         super(date);
-        this.MethodType = ko.observable("0");
-        this.MeansType = ko.observable("0");
+        this.ContactType = ko.observable("0");
+        this.ContactMeans = ko.observable("0");
         this.Employer = ko.observable("");
         this.Contact = ko.observable("");
         this.Phone = ko.observable("");
@@ -174,23 +174,23 @@ class ConLogModel extends BaseLog implements ILogModel {
     }
 
     addressPrompt(): string {
-        if (this.MeansType() === "0") return "Website";
+        if (this.ContactMeans() === "0") return "Website";
         return "Street address";
     }
 
     contactPrompt(): string {
-        if (parseInt(this.MeansType(), 10) <= 1) return "Name [E-mail]";
+        if (parseInt(this.ContactMeans(), 10) <= 1) return "Name [E-mail]";
         return "Name/Booth";
     }
 
     meansName(): string {
-        let means: string = this.MeansType();
-        return ConMeans[means];
+        let means: string = this.ContactMeans();
+        return ContactMeans[means];
     }
 
     methodName(): string {
-        let method: string = this.MethodType();
-        return ConMethods[method];
+        let method: string = this.ContactType();
+        return ContactType[method];
     }
 }
 
@@ -216,8 +216,9 @@ class AdditionModel {
 
     clearConModel(): void {
         let model = this.conModel;
-        model.MethodType("0");
-        model.MeansType("0");
+        model.Description("");
+        model.ContactType("0");
+        model.ContactMeans("0");
         model.Employer("");
         model.Contact("");
         model.Phone ("");
@@ -319,8 +320,8 @@ class ListModel {
         // Manually initialize member data
         conModel.Id(log.Id);
         conModel.Description(log.Description);
-        conModel.MethodType(log.MethodType.toString());
-        conModel.MeansType(log.MeansType.toString());
+        conModel.ContactType(log.ContactType.toString());
+        conModel.ContactMeans(log.ContactMeans.toString());
         conModel.Employer(log.Employer);
         conModel.Contact(log.Contact);
         conModel.Phone(log.Phone);

@@ -17,7 +17,7 @@ namespace JobLogger.Controllers
 
         public async Task<IActionResult> Index()
         {
-            return View(await _logRepository.JobLogsAsync());
+            return View(await _logRepository.GetLogsAsync());
         }
 
         public IActionResult About()

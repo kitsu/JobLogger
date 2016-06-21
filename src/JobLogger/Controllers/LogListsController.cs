@@ -22,7 +22,7 @@ namespace JobLogger.Controllers
         // GET: /LogLists/
         public async Task<JsonResult> Index()
         {
-            var logs = await _logRepository.JobLogsAsync();
+            var logs = await _logRepository.GetLogsAsync();
             return Json(new { success = true,
                               data = logs });
         }
@@ -32,7 +32,7 @@ namespace JobLogger.Controllers
         {
             // FIXME Create view model that extracts just dates for week
             // FIXME Set ViewData["title"] to the week shown
-            var model = await _logRepository.JobLogsAsync();
+            var model = await _logRepository.GetLogsAsync();
             return Json(model);
         }
 

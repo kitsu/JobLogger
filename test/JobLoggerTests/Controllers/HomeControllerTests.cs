@@ -19,7 +19,7 @@ namespace JobLoggerTests
             var list = new List<BaseLog>();
             list.Add(new ActivityLog());
             var repo = new Mock<ILogRepository>();
-            repo.Setup(r => r.JobLogsAsync())
+            repo.Setup(r => r.GetLogsAsync())
                 .Returns(Task.FromResult<IEnumerable<BaseLog>>(list));
 
             var ctrl = new HomeController(repo.Object);

@@ -94,12 +94,12 @@ var ActLogModel = (function (_super) {
     }
     return ActLogModel;
 }(BaseLog));
-var ConMethods = {
+var ContactType = {
     "0": "Application",
     "1": "Interview",
     "2": "Inquery",
 };
-var ConMeans = {
+var ContactMeans = {
     "0": "Online",
     "1": "Mail",
     "2": "InPerson",
@@ -117,8 +117,8 @@ var ConLogModel = (function (_super) {
         this.toggleEdit = function () {
             _this.Edit(!_this.Edit());
         };
-        this.MethodType = ko.observable("0");
-        this.MeansType = ko.observable("0");
+        this.ContactType = ko.observable("0");
+        this.ContactMeans = ko.observable("0");
         this.Employer = ko.observable("");
         this.Contact = ko.observable("");
         this.Phone = ko.observable("");
@@ -138,22 +138,22 @@ var ConLogModel = (function (_super) {
         };
     }
     ConLogModel.prototype.addressPrompt = function () {
-        if (this.MeansType() === "0")
+        if (this.ContactMeans() === "0")
             return "Website";
         return "Street address";
     };
     ConLogModel.prototype.contactPrompt = function () {
-        if (parseInt(this.MeansType(), 10) <= 1)
+        if (parseInt(this.ContactMeans(), 10) <= 1)
             return "Name [E-mail]";
         return "Name/Booth";
     };
     ConLogModel.prototype.meansName = function () {
-        var means = this.MeansType();
-        return ConMeans[means];
+        var means = this.ContactMeans();
+        return ContactMeans[means];
     };
     ConLogModel.prototype.methodName = function () {
-        var method = this.MethodType();
-        return ConMethods[method];
+        var method = this.ContactType();
+        return ContactType[method];
     };
     return ConLogModel;
 }(BaseLog));
@@ -199,8 +199,9 @@ var AdditionModel = (function () {
     };
     AdditionModel.prototype.clearConModel = function () {
         var model = this.conModel;
-        model.MethodType("0");
-        model.MeansType("0");
+        model.Description("");
+        model.ContactType("0");
+        model.ContactMeans("0");
         model.Employer("");
         model.Contact("");
         model.Phone("");
@@ -281,8 +282,8 @@ var ListModel = (function () {
         // Manually initialize member data
         conModel.Id(log.Id);
         conModel.Description(log.Description);
-        conModel.MethodType(log.MethodType.toString());
-        conModel.MeansType(log.MeansType.toString());
+        conModel.ContactType(log.ContactType.toString());
+        conModel.ContactMeans(log.ContactMeans.toString());
         conModel.Employer(log.Employer);
         conModel.Contact(log.Contact);
         conModel.Phone(log.Phone);

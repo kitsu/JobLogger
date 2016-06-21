@@ -57,7 +57,7 @@
 .nav-tabs > li.active > a:hover,
 .nav-tabs > li.active > a:focus {
     border-color: darkslateblue;
-    border-bottom: 0px;
+    border-bottom: 0;
 }
 
 .nav-tabs > li >a:hover {

@@ -52,13 +52,13 @@
                 <div class="panel-heading">Contact Type</div>
                 <div class="panel-body">
                     <div class="btn-group btn-group-justified" data-toggle="buttons"
-                         data-bind="radio: model.MethodType">
-                        @foreach (int val in typeof(MethodType).GetEnumValues())
+                         data-bind="radio: model.ContactType">
+                        @foreach (int val in typeof(ContactType).GetEnumValues())
                         {
-                            var name = typeof(MethodType).GetEnumName(val);
+                            var name = typeof(ContactType).GetEnumName(val);
                             <label class="btn btn-primary"
                                    title="@name">
-                                <input type="radio" name="method"
+                                <input type="radio" name="conType"
                                        value="@val" autocomplete="off" />
                                 <span class="hidden-xs">
                                     @name
@@ -78,13 +78,13 @@
                 <div class="panel-body">
                     <div class="btn-group btn-group-justified"
                          data-toggle="buttons"
-                         data-bind="radio: model.MeansType">
-                        @foreach (int val in typeof(MeansType).GetEnumValues())
+                         data-bind="radio: model.ContactMeans">
+                        @foreach (int val in typeof(ContactMeans).GetEnumValues())
                         {
-                            var name = typeof(MeansType).GetEnumName(val);
+                            var name = typeof(ContactMeans).GetEnumName(val);
                             <label class="btn btn-primary active"
                                    title="@name">
-                                <input type="radio" name="method"
+                                <input type="radio" name="means"
                                        value="@val" autocomplete="off" checked />
                                 <span class="hidden-xs">
                                     @name

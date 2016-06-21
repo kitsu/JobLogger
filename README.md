@@ -31,11 +31,9 @@ I intend to deploy this on Azure, but it is still early days.
 
 ## ToDo
 
-- [ ] Add LogRepo unittests (requires mocking many things).
 - [ ] Add filter by date range (maybe just "Week of The XX"?).
 - [ ] Add basic log search ability - text match against string fields.
 - [ ] Add advanced log search ability - search by type, flags, specific field match.
-- [x] Add auth token code to all CRUD methods on client & server.
 - [ ] Setup Google Sign-In, investigate LinkedIn Sign-In.
 - [ ] Create per-user sharable link with uneditable list view.
 - [ ] Add report creation (plain text? html?).

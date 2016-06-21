@@ -1,15 +1,15 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Newtonsoft.Json;
 using System.Linq;
 using System.Threading.Tasks;
 
 
 namespace JobLogger.Models
 {
-    public enum MethodType { Application, Interview, Inquery }
-    public enum MeansType { Online, Mail, InPerson, Kiosk, Telephone, Fax }
+    public enum ContactType { Application, Interview, Inquery }
+    public enum ContactMeans { Online, Mail, InPerson, Kiosk, Telephone, Fax }
     public abstract class BaseLog
     {
         public Guid Id { get; set; }
@@ -39,10 +39,10 @@ namespace JobLogger.Models
     {
 
         [Required]
-        public MethodType MethodType { get; set; }
+        public ContactType ContactType { get; set; }
 
         [Required]
-        public MeansType MeansType { get; set; }
+        public ContactMeans ContactMeans { get; set; }
 
         [Required]
         [StringLength(64)]
