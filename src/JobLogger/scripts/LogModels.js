@@ -151,9 +151,9 @@ var ConLogModel = (function (_super) {
         var means = this.ContactMeans();
         return ContactMeans[means];
     };
-    ConLogModel.prototype.methodName = function () {
-        var method = this.ContactType();
-        return ContactType[method];
+    ConLogModel.prototype.TypeName = function () {
+        var kind = this.ContactType();
+        return ContactType[kind];
     };
     return ConLogModel;
 }(BaseLog));
@@ -207,7 +207,6 @@ var AdditionModel = (function () {
         model.Phone("");
         model.Address("");
         model.City("");
-        //model.State("WA");
     };
     return AdditionModel;
 }());

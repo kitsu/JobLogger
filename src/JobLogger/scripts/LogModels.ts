@@ -188,9 +188,9 @@ class ConLogModel extends BaseLog implements ILogModel {
         return ContactMeans[means];
     }
 
-    methodName(): string {
-        let method: string = this.ContactType();
-        return ContactType[method];
+    TypeName(): string {
+        let kind: string = this.ContactType();
+        return ContactType[kind];
     }
 }
 
@@ -224,7 +224,6 @@ class AdditionModel {
         model.Phone ("");
         model.Address("");
         model.City("");
-        //model.State("WA");
     }
 
     onActSuccess = (result: any): void => {

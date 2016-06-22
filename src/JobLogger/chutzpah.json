@@ -1,0 +1,22 @@
+﻿{
+  "Framework": "jasmine",
+  "Compile": {
+    "Extensions": [".ts"],
+    "ExtensionsWithNoOutput": [".d.ts"],
+    "Mode": "External",
+    "UseSourceMaps": true
+   },
+  "References": [
+    {
+      "Includes": [ "*/scripts/*.ts",
+        "*/wwwroot/lib/knockout/build/knockout-raw.js",
+        "*/wwwroot/lib/knockout.mapping/knockout.mapping-2.4.1.debug.js",
+        "*/wwwroot/lib/moment/moment.js" ],
+      "Excludes": [ "*/scripts/*/*.d.ts" ]
+    }
+  ],
+  "Tests": [
+    { "Includes": [ "*/scripts/test/*.ts" ],
+      "Excludes": ["*/scripts/test/*.d.ts", "*/wwwroot/*"] }
+  ]
+}
