@@ -136,4 +136,38 @@ describe("AdditionModel", function () {
         expect(model.conModel.State()).toBe("SW");
     });
 });
+describe("ListModel", function () {
+    var model = new ListModel();
+    it("updating with activity adds ActLogModel instance", function () {
+        model.updateList({
+            success: true,
+            data: [{
+                    LogDate: "Sometime",
+                    Description: "Something",
+                    Location: "Somewhere"
+                }]
+        });
+        expect(model.Count()).toEqual(1);
+        expect(model.Logs.pop() instanceof ActLogModel).toBe(true);
+    });
+    it("updating with contact adds ConLogModel instance", function () {
+        model.updateList({
+            success: true,
+            data: [{
+                    LogDate: "Sometime",
+                    Description: "Something",
+                    ContactType: "2",
+                    ContactMeans: "4",
+                    Employer: "Somewhere",
+                    Contact: "Someone",
+                    Phone: "123-4567",
+                    Address: "1234 street",
+                    City: "Somewhere",
+                    State: "SW",
+                }]
+        });
+        expect(model.Count()).toEqual(1);
+        expect(model.Logs.pop() instanceof ConLogModel).toBe(true);
+    });
+});
 //# sourceMappingURL=testLogModels.js.map
