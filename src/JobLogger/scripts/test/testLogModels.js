@@ -43,6 +43,12 @@ describe("ActLogModel", function () {
         model.toggleEdit();
         expect(model.Edit()).toBe(true);
     });
+    it("contains a Shown flag", function () {
+        expect(model.Shown).toBeDefined();
+    });
+    it("Shown is true by default", function () {
+        expect(model.Shown()).toBe(true);
+    });
 });
 describe("ConLogModel", function () {
     var model = new ConLogModel("now", "SW");
@@ -95,6 +101,12 @@ describe("ConLogModel", function () {
         model.toggleEdit();
         expect(model.Edit()).toBe(true);
     });
+    it("contains a Shown flag", function () {
+        expect(model.Shown).toBeDefined();
+    });
+    it("Shown is true by default", function () {
+        expect(model.Shown()).toBe(true);
+    });
 });
 describe("AdditionModel", function () {
     var model = new AdditionModel();
@@ -136,38 +148,57 @@ describe("AdditionModel", function () {
         expect(model.conModel.State()).toBe("SW");
     });
 });
-describe("ListModel", function () {
+function buildListModel(data) {
     var model = new ListModel();
+    model.updateList({
+        success: true,
+        data: data
+    });
+    return model;
+}
+describe("ListModel", function () {
+    var actData = {
+        LogDate: "Sometime",
+        Description: "Something",
+        Location: "Somewhere"
+    };
+    var conData = {
+        LogDate: "Sometime",
+        Description: "Something",
+        ContactType: "2",
+        ContactMeans: "4",
+        Employer: "Somewhere",
+        Contact: "Someone",
+        Phone: "123-4567",
+        Address: "1234 street",
+        City: "Somewhere",
+        State: "SW",
+    };
     it("updating with activity adds ActLogModel instance", function () {
-        model.updateList({
-            success: true,
-            data: [{
-                    LogDate: "Sometime",
-                    Description: "Something",
-                    Location: "Somewhere"
-                }]
-        });
+        var model = buildListModel([actData]);
         expect(model.Count()).toEqual(1);
         expect(model.Logs.pop() instanceof ActLogModel).toBe(true);
     });
     it("updating with contact adds ConLogModel instance", function () {
-        model.updateList({
-            success: true,
-            data: [{
-                    LogDate: "Sometime",
-                    Description: "Something",
-                    ContactType: "2",
-                    ContactMeans: "4",
-                    Employer: "Somewhere",
-                    Contact: "Someone",
-                    Phone: "123-4567",
-                    Address: "1234 street",
-                    City: "Somewhere",
-                    State: "SW",
-                }]
-        });
+        var model = buildListModel([conData]);
         expect(model.Count()).toEqual(1);
         expect(model.Logs.pop() instanceof ConLogModel).toBe(true);
+    });
+    it("contains Shown members", function () {
+        var model = buildListModel([]);
+        expect(model.ShownLogs).toBeDefined();
+        expect(model.ShownCount).toBeDefined();
+    });
+    it("Shown members default to normal values", function () {
+        var model = buildListModel([actData, conData]);
+        expect(model.ShownLogs()).toEqual(model.Logs());
+        expect(model.ShownCount()).toEqual(model.Count());
+    });
+    it("Shown members only contain shown values", function () {
+        var model = buildListModel([actData, conData]);
+        model.Logs()[0].Shown(false);
+        expect(model.ShownLogs()).toEqual([model.Logs()[1]]);
+        expect(model.ShownCount()).toEqual(1);
     });
 });
 //# sourceMappingURL=testLogModels.js.map

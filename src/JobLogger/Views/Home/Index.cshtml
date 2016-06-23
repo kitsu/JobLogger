@@ -43,7 +43,7 @@
                     <!-- Activity form -->
                     <div role="tabpanel" class="tab-pane active" id="Activity">
                         <form class="form-horizontal" data-bind="submit: actModel.addLog.bind(actModel)">
-                            <div data-bind="template: {name: 'LogActTemp',
+                            <div data-bind="template: {name: 'EditActTemp',
                                                        data: {actionName: 'Add Log',
                                                               model: actModel}}"></div>
                         </form>
@@ -51,7 +51,7 @@
                     <!-- Contact form -->
                     <div role="tabpanel" class="tab-pane" id="Contact">
                         <form class="form-horizontal" data-bind="submit: conModel.addLog.bind(conModel)">
-                            <div data-bind="template: {name: 'LogConTemp',
+                            <div data-bind="template: {name: 'EditConTemp',
                                                        data: {actionName: 'Add Log',
                                                               model: conModel}}"></div>
                         </form>
@@ -66,7 +66,9 @@
             <br />
             <span data-bind="text: Count"></span> Logs
         </h4>
-        <div data-bind="template: {name: logTemplate, foreach: Logs}"></div>
+        <div data-bind="template: {name: logTemplate, foreach: ShownLogs,
+                           beforeRemove: function(elem) { $(elem).slideUp() },
+                           afterAdd: function(elem) { $(elem).hide().slideDown() } }"></div>
     </div>
 }
 else

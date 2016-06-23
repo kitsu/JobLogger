@@ -99,16 +99,19 @@ class ActLogModel extends BaseLog implements ILogModel {
     Location: KnockoutObservable<string>;
     // Flag set when editing this log
     Edit: KnockoutObservable<boolean>;
+    // Flag indicating this log should be rendered
+    Shown: KnockoutObservable<boolean>;
 
     constructor(date: string = "") {
         super(date);
         this.Location = ko.observable("");
         // Subclass state
         this.Edit = ko.observable(false);
+        this.Shown = ko.observable(true);
         this.Urls.Add =  "/LogLists/AddActivity";
         this.Urls.Update =  "/LogLists/EditActivity";
         this.Mapping = {
-            "ignore": ["Mapping", "Urls", "Callbacks", "Edit", "Id",
+            "ignore": ["Mapping", "Urls", "Callbacks", "Edit", "Shown", "Id",
                        "addLog", "updateLog", "deleteLog", "renderResult",
                        "toggleEdit"]
         };
@@ -145,6 +148,8 @@ class ConLogModel extends BaseLog implements ILogModel {
     State: KnockoutObservable<string>;
     // Flag set when editing this log
     Edit: KnockoutObservable<boolean>;
+    // Flag indicating this log should be rendered
+    Shown: KnockoutObservable<boolean>;
 
     constructor(date: string = "", state: string = "WA") {
         super(date);
@@ -158,11 +163,12 @@ class ConLogModel extends BaseLog implements ILogModel {
         this.State = ko.observable(state);
         // Subclass state
         this.Edit = ko.observable(false);
+        this.Shown = ko.observable(true);
         this.Urls.Add =  "/LogLists/AddContact";
         this.Urls.Update =  "/LogLists/EditContact";
         // This is used to exclude members from ko.toJSON
         this.Mapping = {
-            "ignore": ["Mapping", "Urls", "Callbacks", "Edit", "Id",
+            "ignore": ["Mapping", "Urls", "Callbacks", "Edit", "Shown", "Id",
                        "addLog", "updateLog", "deleteLog", "renderResult",
                         "addressPrompt", "contactPrompt", "methodName",
                         "meansName", "toggleEdit"]
@@ -253,11 +259,19 @@ class AdditionModel {
 
 class ListModel {
     Logs: KnockoutObservableArray<ActLogModel | ConLogModel>;
+    ShownLogs: KnockoutComputed<Array<ActLogModel | ConLogModel>>;
     Count: KnockoutComputed<number>;
+    ShownCount: KnockoutComputed<number>;
 
     constructor() {
         this.Logs = ko.observableArray([]);
+        this.ShownLogs = ko.computed(() => {
+            return ko.utils.arrayFilter(this.Logs(), (item) => {
+                return item.Shown();
+            });
+        });
         this.Count = ko.computed(() => { return this.Logs().length });
+        this.ShownCount = ko.computed(() => { return this.ShownLogs().length });
     }
 
     updateList = (result: any): void => {
@@ -339,8 +353,8 @@ class ListModel {
 
     editTemplate(log: ActLogModel | ConLogModel): string {
         if (log instanceof ActLogModel) {
-            return 'LogActTemp';
+            return 'EditActTemp';
         }
-        return 'LogConTemp';
+        return 'EditConTemp';
     }
 }

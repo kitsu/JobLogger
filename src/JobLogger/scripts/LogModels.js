@@ -84,10 +84,11 @@ var ActLogModel = (function (_super) {
         this.Location = ko.observable("");
         // Subclass state
         this.Edit = ko.observable(false);
+        this.Shown = ko.observable(true);
         this.Urls.Add = "/LogLists/AddActivity";
         this.Urls.Update = "/LogLists/EditActivity";
         this.Mapping = {
-            "ignore": ["Mapping", "Urls", "Callbacks", "Edit", "Id",
+            "ignore": ["Mapping", "Urls", "Callbacks", "Edit", "Shown", "Id",
                 "addLog", "updateLog", "deleteLog", "renderResult",
                 "toggleEdit"]
         };
@@ -127,11 +128,12 @@ var ConLogModel = (function (_super) {
         this.State = ko.observable(state);
         // Subclass state
         this.Edit = ko.observable(false);
+        this.Shown = ko.observable(true);
         this.Urls.Add = "/LogLists/AddContact";
         this.Urls.Update = "/LogLists/EditContact";
         // This is used to exclude members from ko.toJSON
         this.Mapping = {
-            "ignore": ["Mapping", "Urls", "Callbacks", "Edit", "Id",
+            "ignore": ["Mapping", "Urls", "Callbacks", "Edit", "Shown", "Id",
                 "addLog", "updateLog", "deleteLog", "renderResult",
                 "addressPrompt", "contactPrompt", "methodName",
                 "meansName", "toggleEdit"]
@@ -228,7 +230,13 @@ var ListModel = (function () {
             }
         };
         this.Logs = ko.observableArray([]);
+        this.ShownLogs = ko.computed(function () {
+            return ko.utils.arrayFilter(_this.Logs(), function (item) {
+                return item.Shown();
+            });
+        });
         this.Count = ko.computed(function () { return _this.Logs().length; });
+        this.ShownCount = ko.computed(function () { return _this.ShownLogs().length; });
     }
     ListModel.prototype.addAct = function (log) {
         var _this = this;
@@ -299,9 +307,9 @@ var ListModel = (function () {
     };
     ListModel.prototype.editTemplate = function (log) {
         if (log instanceof ActLogModel) {
-            return 'LogActTemp';
+            return 'EditActTemp';
         }
-        return 'LogConTemp';
+        return 'EditConTemp';
     };
     return ListModel;
 }());
