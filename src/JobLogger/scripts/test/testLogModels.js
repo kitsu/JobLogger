@@ -33,7 +33,7 @@ describe("ActLogModel", function () {
             Delete: jasmine.any(Function),
         }));
     });
-    it("contains a Edit flag", function () {
+    it("contains an Edit flag", function () {
         expect(model.Edit).toBeDefined();
     });
     it("Edit is false by default", function () {
@@ -42,12 +42,6 @@ describe("ActLogModel", function () {
     it("Edit is true after calling toggleEdit", function () {
         model.toggleEdit();
         expect(model.Edit()).toBe(true);
-    });
-    it("contains a Shown flag", function () {
-        expect(model.Shown).toBeDefined();
-    });
-    it("Shown is true by default", function () {
-        expect(model.Shown()).toBe(true);
     });
 });
 describe("ConLogModel", function () {
@@ -91,7 +85,7 @@ describe("ConLogModel", function () {
             Delete: jasmine.any(Function),
         }));
     });
-    it("contains a Edit flag", function () {
+    it("contains an Edit flag", function () {
         expect(model.Edit).toBeDefined();
     });
     it("Edit is false by default", function () {
@@ -100,12 +94,6 @@ describe("ConLogModel", function () {
     it("Edit is true after calling toggleEdit", function () {
         model.toggleEdit();
         expect(model.Edit()).toBe(true);
-    });
-    it("contains a Shown flag", function () {
-        expect(model.Shown).toBeDefined();
-    });
-    it("Shown is true by default", function () {
-        expect(model.Shown()).toBe(true);
     });
 });
 describe("AdditionModel", function () {
@@ -158,13 +146,13 @@ function buildListModel(data) {
 }
 describe("ListModel", function () {
     var actData = {
-        LogDate: "Sometime",
+        LogDate: "2016-06-23",
         Description: "Something",
         Location: "Somewhere"
     };
     var conData = {
-        LogDate: "Sometime",
-        Description: "Something",
+        LogDate: "2016-06-01",
+        Description: "Something special",
         ContactType: "2",
         ContactMeans: "4",
         Employer: "Somewhere",
@@ -174,6 +162,7 @@ describe("ListModel", function () {
         City: "Somewhere",
         State: "SW",
     };
+    // Test log addition behavior
     it("updating with activity adds ActLogModel instance", function () {
         var model = buildListModel([actData]);
         expect(model.Count()).toEqual(1);
@@ -184,11 +173,39 @@ describe("ListModel", function () {
         expect(model.Count()).toEqual(1);
         expect(model.Logs.pop() instanceof ConLogModel).toBe(true);
     });
+    // Ensure list search/filter members
     it("contains Shown members", function () {
         var model = buildListModel([]);
         expect(model.ShownLogs).toBeDefined();
         expect(model.ShownCount).toBeDefined();
     });
+    it("contains a Filtered flag", function () {
+        var model = buildListModel([]);
+        expect(model.Filtered).toBeDefined();
+    });
+    it("Filtered is false by default", function () {
+        var model = buildListModel([]);
+        expect(model.Filtered()).toBe(false);
+    });
+    it("Filtered is true after calling toggleFiltered", function () {
+        var model = buildListModel([]);
+        model.toggleFiltered();
+        expect(model.Filtered()).toBe(true);
+    });
+    it("contains a Searched flag", function () {
+        var model = buildListModel([]);
+        expect(model.Searched).toBeDefined();
+    });
+    it("Searched is false by default", function () {
+        var model = buildListModel([]);
+        expect(model.Searched()).toBe(false);
+    });
+    it("Searched is true after calling toggleSearched", function () {
+        var model = buildListModel([]);
+        model.toggleSearched();
+        expect(model.Searched()).toBe(true);
+    });
+    // Test list search/filter behavior
     it("Shown members default to normal values", function () {
         var model = buildListModel([actData, conData]);
         expect(model.ShownLogs()).toEqual(model.Logs());
@@ -196,7 +213,8 @@ describe("ListModel", function () {
     });
     it("Shown members only contain shown values", function () {
         var model = buildListModel([actData, conData]);
-        model.Logs()[0].Shown(false);
+        model.FilterDate("2016-06-23");
+        model.toggleFiltered();
         expect(model.ShownLogs()).toEqual([model.Logs()[1]]);
         expect(model.ShownCount()).toEqual(1);
     });

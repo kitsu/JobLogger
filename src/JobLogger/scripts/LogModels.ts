@@ -102,15 +102,12 @@ class ActLogModel extends BaseLog implements ILogModel {
     Location: KnockoutObservable<string>;
     // Flag set when editing this log
     Edit: KnockoutObservable<boolean>;
-    // Flag indicating this log should be rendered
-    Shown: KnockoutObservable<boolean>;
 
     constructor(date: string = "") {
         super(date);
         this.Location = ko.observable("");
         // Subclass state
         this.Edit = ko.observable(false);
-        this.Shown = ko.observable(true);
         this.Urls.Add =  "/LogLists/AddActivity";
         this.Urls.Update =  "/LogLists/EditActivity";
         this.Mapping = {
@@ -151,8 +148,6 @@ class ConLogModel extends BaseLog implements ILogModel {
     State: KnockoutObservable<string>;
     // Flag set when editing this log
     Edit: KnockoutObservable<boolean>;
-    // Flag indicating this log should be rendered
-    Shown: KnockoutObservable<boolean>;
 
     constructor(date: string = "", state: string = "WA") {
         super(date);
@@ -166,7 +161,6 @@ class ConLogModel extends BaseLog implements ILogModel {
         this.State = ko.observable(state);
         // Subclass state
         this.Edit = ko.observable(false);
-        this.Shown = ko.observable(true);
         this.Urls.Add =  "/LogLists/AddContact";
         this.Urls.Update =  "/LogLists/EditContact";
         // This is used to exclude members from ko.toJSON
@@ -265,15 +259,38 @@ class ListModel {
     ShownLogs: KnockoutComputed<Array<AnyLog>>;
     Count: KnockoutComputed<number>;
     ShownCount: KnockoutComputed<number>;
+    Filtered: KnockoutObservable<Boolean>;
+    FilterDate: KnockoutObservable<string>;
+    Searched: KnockoutObservable<Boolean>;
+    SearchString: KnockoutObservable<string>;
 
     constructor() {
+        // Core members
         this.Logs = ko.observableArray([]);
+        this.Count = ko.computed(() => { return this.Logs().length });
+        // Search/filter control
+        this.Filtered = ko.observable(false);
+        this.FilterDate = ko.observable(moment().format("YYYY-MM-DD"));
+        this.Searched = ko.observable(false);
+        this.SearchString = ko.observable("");
+        // Computed observables
         this.ShownLogs = ko.computed(() => {
-            return ko.utils.arrayFilter(this.Logs(), (item) => {
-                return item.Shown();
+            if (!this.Filtered() && !this.Searched()) {
+                return this.Logs();
+            }
+            let week = DayToWeek(this.FilterDate())
+            let matchWeek = true;
+            let matchSearch = true;
+            return ko.utils.arrayFilter(this.Logs(), (log) => {
+                if (this.Filtered()) {
+                    matchWeek = InWeek(log.LogDate(), week);
+                }
+                if (this.Searched()) {
+                    matchWeek = SearchMatches(this.SearchString(), log);
+                }
+                return matchWeek && matchSearch;
             });
         });
-        this.Count = ko.computed(() => { return this.Logs().length });
         this.ShownCount = ko.computed(() => { return this.ShownLogs().length });
     }
 
@@ -346,6 +363,16 @@ class ListModel {
         conModel.State(log.State);
         this.Logs.unshift(conModel);
     }
+
+    toggleFiltered = (): void => {
+        this.Filtered(!this.Filtered());
+    }
+
+    toggleSearched = (): void => {
+        this.Searched(!this.Searched());
+    }
+
+    updateFiltering(): void {}
 
     logTemplate(log: AnyLog): string {
         if (log instanceof ActLogModel) {

@@ -84,7 +84,6 @@ var ActLogModel = (function (_super) {
         this.Location = ko.observable("");
         // Subclass state
         this.Edit = ko.observable(false);
-        this.Shown = ko.observable(true);
         this.Urls.Add = "/LogLists/AddActivity";
         this.Urls.Update = "/LogLists/EditActivity";
         this.Mapping = {
@@ -128,7 +127,6 @@ var ConLogModel = (function (_super) {
         this.State = ko.observable(state);
         // Subclass state
         this.Edit = ko.observable(false);
-        this.Shown = ko.observable(true);
         this.Urls.Add = "/LogLists/AddContact";
         this.Urls.Update = "/LogLists/EditContact";
         // This is used to exclude members from ko.toJSON
@@ -229,13 +227,38 @@ var ListModel = (function () {
                 }
             }
         };
+        this.toggleFiltered = function () {
+            _this.Filtered(!_this.Filtered());
+        };
+        this.toggleSearched = function () {
+            _this.Searched(!_this.Searched());
+        };
+        // Core members
         this.Logs = ko.observableArray([]);
+        this.Count = ko.computed(function () { return _this.Logs().length; });
+        // Search/filter control
+        this.Filtered = ko.observable(false);
+        this.FilterDate = ko.observable(moment().format("YYYY-MM-DD"));
+        this.Searched = ko.observable(false);
+        this.SearchString = ko.observable("");
+        // Computed observables
         this.ShownLogs = ko.computed(function () {
-            return ko.utils.arrayFilter(_this.Logs(), function (item) {
-                return item.Shown();
+            if (!_this.Filtered() && !_this.Searched()) {
+                return _this.Logs();
+            }
+            var week = DayToWeek(_this.FilterDate());
+            var matchWeek = true;
+            var matchSearch = true;
+            return ko.utils.arrayFilter(_this.Logs(), function (log) {
+                if (_this.Filtered()) {
+                    matchWeek = InWeek(log.LogDate(), week);
+                }
+                if (_this.Searched()) {
+                    matchWeek = SearchMatches(_this.SearchString(), log);
+                }
+                return matchWeek && matchSearch;
             });
         });
-        this.Count = ko.computed(function () { return _this.Logs().length; });
         this.ShownCount = ko.computed(function () { return _this.ShownLogs().length; });
     }
     ListModel.prototype.addAct = function (log) {
@@ -299,6 +322,7 @@ var ListModel = (function () {
         conModel.State(log.State);
         this.Logs.unshift(conModel);
     };
+    ListModel.prototype.updateFiltering = function () { };
     ListModel.prototype.logTemplate = function (log) {
         if (log instanceof ActLogModel) {
             return 'ActLogTemp';

@@ -61,11 +61,8 @@
         </div>
     </div>
     <div id="LogList">
-        <h4 class="text-center">
-            FIXME Add date range filter and search box
-            <br />
-            <span data-bind="text: Count"></span> Logs
-        </h4>
+        <div data-bind="template: {name: 'FilterBar'}"></div>
+        <br />
         <div data-bind="template: {name: logTemplate, foreach: ShownLogs,
                            beforeRemove: function(elem) { $(elem).slideUp() },
                            afterAdd: function(elem) { $(elem).hide().slideDown() } }"></div>
@@ -102,6 +99,7 @@ else
 @if (SignInManager.IsSignedIn(User))
 {
     <script src="~/scripts/LogModels.js" asp-append-version="true"></script>
+    <script src="~/scripts/Filters.js" asp-append-version="true"></script>
     <script src="~/scripts/RadioHandler.js" asp-append-version="true"></script>
     <script type="text/javascript">
         $(function () {

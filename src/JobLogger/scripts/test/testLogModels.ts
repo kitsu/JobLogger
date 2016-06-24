@@ -34,7 +34,7 @@ describe("ActLogModel", () => {
                 Delete: jasmine.any(Function),
             }));
     });
-    it("contains a Edit flag", () => {
+    it("contains an Edit flag", () => {
         expect(model.Edit).toBeDefined();
     });
     it("Edit is false by default", () => {
@@ -43,12 +43,6 @@ describe("ActLogModel", () => {
     it("Edit is true after calling toggleEdit", () => {
         model.toggleEdit();
         expect(model.Edit()).toBe(true);
-    });
-    it("contains a Shown flag", () => {
-        expect(model.Shown).toBeDefined();
-    });
-    it("Shown is true by default", () => {
-        expect(model.Shown()).toBe(true);
     });
 });
 
@@ -93,7 +87,7 @@ describe("ConLogModel", () => {
                 Delete: jasmine.any(Function),
             }));
     });
-    it("contains a Edit flag", () => {
+    it("contains an Edit flag", () => {
         expect(model.Edit).toBeDefined();
     });
     it("Edit is false by default", () => {
@@ -102,12 +96,6 @@ describe("ConLogModel", () => {
     it("Edit is true after calling toggleEdit", () => {
         model.toggleEdit();
         expect(model.Edit()).toBe(true);
-    });
-    it("contains a Shown flag", () => {
-        expect(model.Shown).toBeDefined();
-    });
-    it("Shown is true by default", () => {
-        expect(model.Shown()).toBe(true);
     });
 });
 
@@ -163,13 +151,13 @@ function buildListModel(data: Array<any>): ListModel {
 
 describe("ListModel", () => {
     let actData: any = {
-        LogDate: "Sometime",
+        LogDate: "2016-06-23",
         Description: "Something",
         Location: "Somewhere"
     };
     let conData: any = {
-        LogDate: "Sometime",
-        Description: "Something",
+        LogDate: "2016-06-01",
+        Description: "Something special",
         ContactType: "2",
         ContactMeans: "4",
         Employer: "Somewhere",
@@ -179,6 +167,7 @@ describe("ListModel", () => {
         City: "Somewhere",
         State: "SW",
     };
+    // Test log addition behavior
     it("updating with activity adds ActLogModel instance", () => {
         let model = buildListModel([actData]);
         expect(model.Count()).toEqual(1);
@@ -189,11 +178,39 @@ describe("ListModel", () => {
         expect(model.Count()).toEqual(1);
         expect(model.Logs.pop() instanceof ConLogModel).toBe(true);
     });
+    // Ensure list search/filter members
     it("contains Shown members", () => {
         let model = buildListModel([]);
         expect(model.ShownLogs).toBeDefined();
         expect(model.ShownCount).toBeDefined();
     });
+    it("contains a Filtered flag", () => {
+        let model = buildListModel([]);
+        expect(model.Filtered).toBeDefined();
+    });
+    it("Filtered is false by default", () => {
+        let model = buildListModel([]);
+        expect(model.Filtered()).toBe(false);
+    });
+    it("Filtered is true after calling toggleFiltered", () => {
+        let model = buildListModel([]);
+        model.toggleFiltered();
+        expect(model.Filtered()).toBe(true);
+    });
+    it("contains a Searched flag", () => {
+        let model = buildListModel([]);
+        expect(model.Searched).toBeDefined();
+    });
+    it("Searched is false by default", () => {
+        let model = buildListModel([]);
+        expect(model.Searched()).toBe(false);
+    });
+    it("Searched is true after calling toggleSearched", () => {
+        let model = buildListModel([]);
+        model.toggleSearched();
+        expect(model.Searched()).toBe(true);
+    });
+    // Test list search/filter behavior
     it("Shown members default to normal values", () => {
         let model = buildListModel([actData, conData]);
         expect(model.ShownLogs()).toEqual(model.Logs());
@@ -201,7 +218,8 @@ describe("ListModel", () => {
     });
     it("Shown members only contain shown values", () => {
         let model = buildListModel([actData, conData]);
-        model.Logs()[0].Shown(false);
+        model.FilterDate("2016-06-23");
+        model.toggleFiltered()
         expect(model.ShownLogs()).toEqual([model.Logs()[1]]);
         expect(model.ShownCount()).toEqual(1);
     });

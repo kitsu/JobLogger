@@ -25,43 +25,42 @@ describe("DayToWeek", function () {
         expect(monday.date()).toEqual(27);
     });
 });
-describe("WeekOf", function () {
-    it("selects logs with dates in the week containing date", function () {
+describe("InWeek", function () {
+    var date = "2016-06-23";
+    var week = DayToWeek(date);
+    it("Returns true when provided date is in provided week", function () {
         // Thursday at the time of writing
-        var date = new Date("Jun 23 2016");
-        // Build array of logs with ids indicating containment in week
-        var mdate = moment(date);
-        var logs = [];
-        var log;
-        log = new ActLogModel(moment(mdate).add(2, "days").format("YYYY-MM-DD"));
-        log.Id("in");
-        logs.push(log);
-        log = new ConLogModel(moment(mdate).add(5, "days").format("YYYY-MM-DD"));
-        log.Id("out");
-        logs.push(log);
-        log = new ActLogModel(moment(mdate).subtract(7, "days").format("YYYY-MM-DD"));
-        log.Id("out");
-        logs.push(log);
-        log = new ConLogModel(moment(mdate).subtract(2, "days").format("YYYY-MM-DD"));
-        log.Id("in");
-        logs.push(log);
-        log = new ConLogModel(moment(mdate).add(4, "days").format("YYYY-MM-DD"));
-        log.Id("out");
-        logs.push(log);
-        log = new ActLogModel(moment(mdate).add(1, "days").format("YYYY-MM-DD"));
-        log.Id("in");
-        logs.push(log);
-        var filtered = WeekOf(date, logs);
-        for (var _i = 0, filtered_1 = filtered; _i < filtered_1.length; _i++) {
-            var log_1 = filtered_1[_i];
-            if (log_1.Shown() === true) {
-                expect(log_1.Id()).toEqual("in");
-            }
-            else {
-                expect(log_1.Id()).toEqual("out");
-            }
-        }
-        ;
+        expect(InWeek(date, week)).toBe(true);
+    });
+    it("Returns false when provided date is before provided week", function () {
+        // Thursday at the time of writing
+        var date = "2016-06-01";
+        expect(InWeek(date, week)).toBe(false);
+    });
+    it("Returns false when provided date is after provided week", function () {
+        // Thursday at the time of writing
+        var date = "2016-06-30";
+        expect(InWeek(date, week)).toBe(false);
+    });
+    it("Returns true when provided date is preceeding Monday of week", function () {
+        // Thursday at the time of writing
+        var date = "2016-06-20";
+        expect(InWeek(date, week)).toBe(true);
+    });
+    it("Returns false when provided date is preceeding Sunday of week", function () {
+        // Thursday at the time of writing
+        var date = "2016-06-19";
+        expect(InWeek(date, week)).toBe(false);
+    });
+    it("Returns true when provided date is Sunday of week", function () {
+        // Thursday at the time of writing
+        var date = "2016-06-26";
+        expect(InWeek(date, week)).toBe(true);
+    });
+    it("Returns false when provided date is next Monday after week", function () {
+        // Thursday at the time of writing
+        var date = "2016-06-27";
+        expect(InWeek(date, week)).toBe(false);
     });
 });
 //# sourceMappingURL=testFilters.js.map

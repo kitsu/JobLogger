@@ -287,3 +287,42 @@
         </div>
     </div>
 </script>
+
+<script type="text/html" id="FilterBar">
+    <div class="form-inline">
+        <h4 class="pull-left">
+            Logs:
+            <span data-bind="text: ShownCount"></span>/
+            <span data-bind="text: Count"></span>
+        </h4>
+        <div class="pull-right">
+            <label class="control-label">
+                Week of:
+                <input type="date" class="form-control"
+                       data-bind="value: FilterDate" />
+            </label>
+            <div class="btn-group" data-toggle="buttons">
+                <label class="btn btn-sm btn-default"
+                       data-bind="css: {'active': !Filtered},
+                              click: toggleFiltered">
+                    <input type="checkbox" data-bind="checked: Filtered" />
+                    Filter
+                </label>
+            </div>
+            <label class="control-label">
+                Search:
+                <input type="text" class="form-control"
+                       data-bind="value: SearchString" />
+            </label>
+            <div class="btn-group" data-toggle="buttons">
+                <label class="btn btn-sm btn-default"
+                       data-bind="css: {'active': !Searched},
+                              click: toggleSearched">
+                    <input type="checkbox" data-bind="checked: Searched" />
+                    Search
+                </label>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+</script>
