@@ -16,6 +16,9 @@ interface ILogModel {
     deleteLog(button: Element): void;
 }
 
+type AnyLog = ActLogModel | ConLogModel;
+type LogArray = Array<AnyLog>;
+
 abstract class BaseLog implements ILogModel {
     Id: KnockoutObservable<string>;
     LogDate: KnockoutObservable<string>;
@@ -258,8 +261,8 @@ class AdditionModel {
 }
 
 class ListModel {
-    Logs: KnockoutObservableArray<ActLogModel | ConLogModel>;
-    ShownLogs: KnockoutComputed<Array<ActLogModel | ConLogModel>>;
+    Logs: KnockoutObservableArray<AnyLog>;
+    ShownLogs: KnockoutComputed<Array<AnyLog>>;
     Count: KnockoutComputed<number>;
     ShownCount: KnockoutComputed<number>;
 
@@ -344,14 +347,14 @@ class ListModel {
         this.Logs.unshift(conModel);
     }
 
-    logTemplate(log: ActLogModel | ConLogModel): string {
+    logTemplate(log: AnyLog): string {
         if (log instanceof ActLogModel) {
             return 'ActLogTemp';
         }
         return 'ConLogTemp';
     }
 
-    editTemplate(log: ActLogModel | ConLogModel): string {
+    editTemplate(log: AnyLog): string {
         if (log instanceof ActLogModel) {
             return 'EditActTemp';
         }

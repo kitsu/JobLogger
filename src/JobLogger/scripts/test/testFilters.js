@@ -51,9 +51,9 @@ describe("WeekOf", function () {
         log = new ActLogModel(moment(mdate).add(1, "days").format("YYYY-MM-DD"));
         log.Id("in");
         logs.push(log);
-        WeekOf(date, logs);
-        for (var _i = 0, logs_1 = logs; _i < logs_1.length; _i++) {
-            var log_1 = logs_1[_i];
+        var filtered = WeekOf(date, logs);
+        for (var _i = 0, filtered_1 = filtered; _i < filtered_1.length; _i++) {
+            var log_1 = filtered_1[_i];
             if (log_1.Shown() === true) {
                 expect(log_1.Id()).toEqual("in");
             }

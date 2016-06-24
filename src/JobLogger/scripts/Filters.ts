@@ -15,7 +15,7 @@ function DayToWeek(date: Date): Array<moment.Moment> {
 };
 
 // Set Shown true for every log entry in the same week as date
-function WeekOf(date: Date, logs: Array<ActLogModel | ConLogModel>): void {
+function WeekOf(date: Date, logs: LogArray): LogArray {
     let [start, end] = DayToWeek(date);
     let logDate: moment.Moment;
     console.log(`Start: ${start.format("YYYY-MM-DD")}, End: ${end.format("YYYY-MM-DD")}`);
@@ -28,4 +28,5 @@ function WeekOf(date: Date, logs: Array<ActLogModel | ConLogModel>): void {
             log.Shown(false);
         }
     }
+    return logs;
 };

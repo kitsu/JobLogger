@@ -29,6 +29,7 @@ function WeekOf(date, logs) {
             log.Shown(false);
         }
     }
+    return logs;
 }
 ;
 //# sourceMappingURL=Filters.js.map
