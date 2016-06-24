@@ -24,9 +24,18 @@ function InWeek(date: string, [start, end]: [moment.Moment, moment.Moment]): boo
 }
 
 // Filter predicate returning true when search string is in log data
-function SearchMatches(search: string, log: AnyLog): boolean {
+function SearchMatches(query: RegExp, log: AnyLog): boolean {
     if (log instanceof ActLogModel) {
-        return true;
+        return query.test(log.Location()) || query.test(log.Description());
+    } else {
+        let values = [log.Description(), log.Employer(), log.Contact(),
+                      log.Address(), log.City(), log.State()];
+        for (let val of values) {
+            console.log(val);
+            if (query.test(val) === true) {
+                return true;
+            }
+        }
+        return false;
     }
-    return true;
 }

@@ -23,10 +23,21 @@ function InWeek(date, _a) {
     return false;
 }
 // Filter predicate returning true when search string is in log data
-function SearchMatches(search, log) {
+function SearchMatches(query, log) {
     if (log instanceof ActLogModel) {
-        return true;
+        return query.test(log.Location()) || query.test(log.Description());
     }
-    return true;
+    else {
+        var values = [log.Description(), log.Employer(), log.Contact(),
+            log.Address(), log.City(), log.State()];
+        for (var _i = 0, values_1 = values; _i < values_1.length; _i++) {
+            var val = values_1[_i];
+            console.log(val);
+            if (query.test(val) === true) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
 //# sourceMappingURL=Filters.js.map

@@ -63,4 +63,66 @@ describe("InWeek", function () {
         expect(InWeek(date, week)).toBe(false);
     });
 });
+describe("SearchMatches", function () {
+    var goodq = new RegExp("match", "i");
+    var badq = new RegExp("missing", "i");
+    // Activity log search
+    it("given a query and an act log matches against location", function () {
+        var log = new ActLogModel("now");
+        log.Location("This string contains a Match!");
+        expect(SearchMatches(goodq, log)).toBe(true);
+    });
+    it("given a query and an act log matches against description", function () {
+        var log = new ActLogModel("now");
+        log.Description("This string contains a Match!");
+        expect(SearchMatches(goodq, log)).toBe(true);
+    });
+    it("given a non-matching query and an act logreturns false", function () {
+        var log = new ActLogModel("now");
+        log.Location("This string contains a Match!");
+        log.Description("This string contains a Match!");
+        expect(SearchMatches(badq, log)).toBe(false);
+    });
+    // Contact log search
+    it("given a query and an con log matches against Description", function () {
+        var log = new ConLogModel("now");
+        log.Description("This string contains a Match!");
+        expect(SearchMatches(goodq, log)).toBe(true);
+    });
+    it("given a query and an con log matches against Employer", function () {
+        var log = new ConLogModel("now");
+        log.Employer("This string contains a Match!");
+        expect(SearchMatches(goodq, log)).toBe(true);
+    });
+    it("given a query and an con log matches against Contact", function () {
+        var log = new ConLogModel("now");
+        log.Contact("This string contains a Match!");
+        expect(SearchMatches(goodq, log)).toBe(true);
+    });
+    it("given a query and an con log matches against Address", function () {
+        var log = new ConLogModel("now");
+        log.Address("This string contains a Match!");
+        expect(SearchMatches(goodq, log)).toBe(true);
+    });
+    it("given a query and an con log matches against City", function () {
+        var log = new ConLogModel("now");
+        log.City("This string contains a Match!");
+        expect(SearchMatches(goodq, log)).toBe(true);
+    });
+    it("given a query and an con log matches against State", function () {
+        var log = new ConLogModel("now");
+        log.State("This string contains a Match!");
+        expect(SearchMatches(goodq, log)).toBe(true);
+    });
+    it("given a non-matching query and an con logreturns false", function () {
+        var log = new ConLogModel("now");
+        log.Description("This string contains a Match!");
+        log.Employer("This string contains a Match!");
+        log.Contact("This string contains a Match!");
+        log.Address("This string contains a Match!");
+        log.City("This string contains a Match!");
+        log.State("This string contains a Match!");
+        expect(SearchMatches(badq, log)).toBe(false);
+    });
+});
 //# sourceMappingURL=testFilters.js.map

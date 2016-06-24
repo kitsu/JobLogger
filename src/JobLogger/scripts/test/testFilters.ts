@@ -67,3 +67,66 @@ describe("InWeek", () => {
     });
 });
 
+describe("SearchMatches", () => {
+    let goodq = new RegExp("match", "i");
+    let badq = new RegExp("missing", "i");
+    // Activity log search
+    it("given a query and an act log matches against location", () => {
+        let log = new ActLogModel("now");
+        log.Location("This string contains a Match!");
+        expect(SearchMatches(goodq, log)).toBe(true);
+    });
+    it("given a query and an act log matches against description", () => {
+        let log = new ActLogModel("now");
+        log.Description("This string contains a Match!");
+        expect(SearchMatches(goodq, log)).toBe(true);
+    });
+    it("given a non-matching query and an act logreturns false", () => {
+        let log = new ActLogModel("now");
+        log.Location("This string contains a Match!");
+        log.Description("This string contains a Match!");
+        expect(SearchMatches(badq, log)).toBe(false);
+    });
+    // Contact log search
+    it("given a query and an con log matches against Description", () => {
+        let log = new ConLogModel("now");
+        log.Description("This string contains a Match!");
+        expect(SearchMatches(goodq, log)).toBe(true);
+    });
+    it("given a query and an con log matches against Employer", () => {
+        let log = new ConLogModel("now");
+        log.Employer("This string contains a Match!");
+        expect(SearchMatches(goodq, log)).toBe(true);
+    });
+    it("given a query and an con log matches against Contact", () => {
+        let log = new ConLogModel("now");
+        log.Contact("This string contains a Match!");
+        expect(SearchMatches(goodq, log)).toBe(true);
+    });
+    it("given a query and an con log matches against Address", () => {
+        let log = new ConLogModel("now");
+        log.Address("This string contains a Match!");
+        expect(SearchMatches(goodq, log)).toBe(true);
+    });
+    it("given a query and an con log matches against City", () => {
+        let log = new ConLogModel("now");
+        log.City("This string contains a Match!");
+        expect(SearchMatches(goodq, log)).toBe(true);
+    });
+    it("given a query and an con log matches against State", () => {
+        let log = new ConLogModel("now");
+        log.State("This string contains a Match!");
+        expect(SearchMatches(goodq, log)).toBe(true);
+    });
+    it("given a non-matching query and an con logreturns false", () => {
+        let log = new ConLogModel("now");
+        log.Description("This string contains a Match!");
+        log.Employer("This string contains a Match!");
+        log.Contact("This string contains a Match!");
+        log.Address("This string contains a Match!");
+        log.City("This string contains a Match!");
+        log.State("This string contains a Match!");
+        expect(SearchMatches(badq, log)).toBe(false);
+    });
+});
+

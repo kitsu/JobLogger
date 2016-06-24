@@ -280,14 +280,16 @@ class ListModel {
             }
             let week = DayToWeek(this.FilterDate())
             let matchWeek = true;
+            let query = new RegExp(this.SearchString(), "i");
             let matchSearch = true;
             return ko.utils.arrayFilter(this.Logs(), (log) => {
                 if (this.Filtered()) {
                     matchWeek = InWeek(log.LogDate(), week);
                 }
                 if (this.Searched()) {
-                    matchWeek = SearchMatches(this.SearchString(), log);
+                    matchSearch = SearchMatches(query, log);
                 }
+                // Note filters are cumulative
                 return matchWeek && matchSearch;
             });
         });
@@ -296,7 +298,6 @@ class ListModel {
 
     updateList = (result: any): void => {
         if (result.success === true) {
-            console.log(`Got ${result.data.length} Logs!`);
             for (let log of result.data) {
                 if (log.hasOwnProperty("Location")) {
                     this.addAct(log);

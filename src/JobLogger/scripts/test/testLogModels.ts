@@ -216,11 +216,27 @@ describe("ListModel", () => {
         expect(model.ShownLogs()).toEqual(model.Logs());
         expect(model.ShownCount()).toEqual(model.Count());
     });
-    it("Shown members only contain shown values", () => {
+    it("Shown members only contain matching dates", () => {
         let model = buildListModel([actData, conData]);
         model.FilterDate("2016-06-23");
         model.toggleFiltered()
         expect(model.ShownLogs()).toEqual([model.Logs()[1]]);
         expect(model.ShownCount()).toEqual(1);
+    });
+    it("Shown members only contain matching values", () => {
+        let model = buildListModel([actData, conData]);
+        model.SearchString("special");
+        model.toggleSearched()
+        expect(model.ShownLogs()).toEqual([model.Logs()[0]]);
+        expect(model.ShownCount()).toEqual(1);
+    });
+    it("search and filter are cumulative", () => {
+        let model = buildListModel([actData, conData]);
+        model.FilterDate("2016-06-23");
+        model.toggleFiltered()
+        model.SearchString("special");
+        model.toggleSearched()
+        expect(model.ShownLogs()).toEqual([]);
+        expect(model.ShownCount()).toEqual(0);
     });
 });

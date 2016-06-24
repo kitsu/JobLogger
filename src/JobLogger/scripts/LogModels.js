@@ -215,7 +215,6 @@ var ListModel = (function () {
         var _this = this;
         this.updateList = function (result) {
             if (result.success === true) {
-                console.log("Got " + result.data.length + " Logs!");
                 for (var _i = 0, _a = result.data; _i < _a.length; _i++) {
                     var log = _a[_i];
                     if (log.hasOwnProperty("Location")) {
@@ -248,14 +247,16 @@ var ListModel = (function () {
             }
             var week = DayToWeek(_this.FilterDate());
             var matchWeek = true;
+            var query = new RegExp(_this.SearchString(), "i");
             var matchSearch = true;
             return ko.utils.arrayFilter(_this.Logs(), function (log) {
                 if (_this.Filtered()) {
                     matchWeek = InWeek(log.LogDate(), week);
                 }
                 if (_this.Searched()) {
-                    matchWeek = SearchMatches(_this.SearchString(), log);
+                    matchSearch = SearchMatches(query, log);
                 }
+                // Note filters are cumulative
                 return matchWeek && matchSearch;
             });
         });
