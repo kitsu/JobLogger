@@ -31,7 +31,6 @@ function SearchMatches(query: RegExp, log: AnyLog): boolean {
         let values = [log.Description(), log.Employer(), log.Contact(),
                       log.Address(), log.City(), log.State()];
         for (let val of values) {
-            console.log(val);
             if (query.test(val) === true) {
                 return true;
             }

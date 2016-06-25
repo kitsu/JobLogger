@@ -99,6 +99,12 @@ namespace JobLogger
                 ClientSecret = Configuration["Authentication:Google:AppSecret"]
             });
 
+            app.UseMicrosoftAccountAuthentication(new MicrosoftAccountOptions()
+            {
+                ClientId = Configuration["Authentication:Microsoft:AppId"],
+                ClientSecret = Configuration["Authentication:Microsoft:AppSecret"]
+            });
+
             app.UseMvc(routes =>
             {
                 routes.MapRoute(

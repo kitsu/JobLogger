@@ -31,7 +31,6 @@ I intend to deploy this on Azure, but it is still early days.
 
 ## ToDo
 
-- [x] Setup Google Sign-In, investigate LinkedIn Sign-In.
 - [ ] Create per-user sharable link with uneditable list view.
 - [ ] Add report creation (plain text? html?).
 - [ ] Research Azure deployment, setup account, make test deployment.

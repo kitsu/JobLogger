@@ -32,7 +32,6 @@ function SearchMatches(query, log) {
             log.Address(), log.City(), log.State()];
         for (var _i = 0, values_1 = values; _i < values_1.length; _i++) {
             var val = values_1[_i];
-            console.log(val);
             if (query.test(val) === true) {
                 return true;
             }
