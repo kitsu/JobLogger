@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using JobLogger.Data;
 using JobLogger.Models;
 using JobLogger.Services;
+using Microsoft.AspNetCore.Mvc;
 
 namespace JobLogger
 {
@@ -54,6 +55,11 @@ namespace JobLogger
 
             services.AddMvc();
 
+            services.Configure<MvcOptions>(options =>
+            {
+                options.Filters.Add(new RequireHttpsAttribute());
+            });
+
             // Add application services.
             services.AddTransient<IEmailSender, AuthMessageSender>();
             services.AddTransient<ISmsSender, AuthMessageSender>();
@@ -87,6 +93,11 @@ namespace JobLogger
             app.UseIdentity();
 
             // Add external authentication middleware below. To configure them please see http://go.microsoft.com/fwlink/?LinkID=532715
+            app.UseGoogleAuthentication(new GoogleOptions()
+            {
+                ClientId = Configuration["Authentication:Google:AppId"],
+                ClientSecret = Configuration["Authentication:Google:AppSecret"]
+            });
 
             app.UseMvc(routes =>
             {
