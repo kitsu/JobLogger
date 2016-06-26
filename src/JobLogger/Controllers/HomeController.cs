@@ -5,6 +5,7 @@ using JobLogger.Models;
 
 namespace JobLogger.Controllers
 {
+    [RequireHttps]
     public class HomeController : Controller
     {
 
@@ -15,9 +16,9 @@ namespace JobLogger.Controllers
             _logRepository = logRepository;
         }
 
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            return View(await _logRepository.GetLogsAsync());
+            return View();
         }
 
         public IActionResult About()

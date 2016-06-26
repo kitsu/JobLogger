@@ -29,6 +29,7 @@
     "Microsoft.Extensions.Logging": "1.0.0-rc2-final",
     "Microsoft.Extensions.Logging.Console": "1.0.0-rc2-final",
     "Microsoft.Extensions.Logging.Debug": "1.0.0-rc2-final",
+    "Microsoft.Extensions.Options.ConfigurationExtensions": "1.0.0-rc2-final",
     "Microsoft.VisualStudio.Web.BrowserLink.Loader": "14.0.0-rc2-final",
     "Microsoft.VisualStudio.Web.CodeGeneration.Tools": {
       "version": "1.0.0-preview1-final",
@@ -39,7 +40,8 @@
       "type": "build"
     },
     "Microsoft.AspNetCore.Authentication.Google": "1.0.0-rc2-final",
-    "Microsoft.AspNetCore.Authentication.MicrosoftAccount": "1.0.0-rc2-final"},
+    "Microsoft.AspNetCore.Authentication.MicrosoftAccount": "1.0.0-rc2-final",
+    "Sendgrid": "7.0.2"},
 
   "tools": {
     "Microsoft.AspNetCore.Razor.Tools": {

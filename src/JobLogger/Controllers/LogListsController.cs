@@ -10,6 +10,7 @@ using System.Net;
 
 namespace JobLogger.Controllers
 {
+    [RequireHttps]
     public class LogListsController : Controller
     {
         private readonly ILogRepository _logRepository;
@@ -25,15 +26,6 @@ namespace JobLogger.Controllers
             var logs = await _logRepository.GetLogsAsync();
             return Json(new { success = true,
                               data = logs });
-        }
-
-        // GET: /LogLists/Week/{date}
-        public async Task<JsonResult> Week(int Page)
-        {
-            // FIXME Create view model that extracts just dates for week
-            // FIXME Set ViewData["title"] to the week shown
-            var model = await _logRepository.GetLogsAsync();
-            return Json(model);
         }
 
         // GET: /LogLists/Edit

@@ -5,8 +5,9 @@ using System.Threading.Tasks;
 
 namespace JobLogger.Services
 {
-    public interface ISmsSender
+    public class AuthMessageSenderOptions
     {
-        Task SendSmsAsync(string number, string message);
+        public string SendGridUser { get; set; }
+        public string SendGridAppKey { get; set; }
     }
 }

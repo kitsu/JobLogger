@@ -62,7 +62,7 @@ namespace JobLogger
 
             // Add application services.
             services.AddTransient<IEmailSender, AuthMessageSender>();
-            services.AddTransient<ISmsSender, AuthMessageSender>();
+            services.Configure<AuthMessageSenderOptions>(Configuration);
             services.AddScoped<ILogRepository, LogRepository>();
         }
 
