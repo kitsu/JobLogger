@@ -32,7 +32,7 @@ I intend to deploy this on Azure, but it is still early days.
 ## ToDo
 
 - [ ] Create per-user sharable link with uneditable list view.
-- [ ] Add report creation (plain text? html?).
+- [x] Add report creation (email!).
 - [ ] Research Azure deployment, setup account, make test deployment.
 - [ ] Add Google Analytics, setup Ad-Unit, add Url to Search Console.
 - [ ] ...

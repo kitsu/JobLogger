@@ -4,7 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using JobLogger.Models;
-using System.Net;
+using System.Text;
+using JobLogger.Services;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -14,10 +15,12 @@ namespace JobLogger.Controllers
     public class LogListsController : Controller
     {
         private readonly ILogRepository _logRepository;
+        private readonly IEmailSender _emailSender;
 
-        public LogListsController(ILogRepository logRepository)
+        public LogListsController(ILogRepository logRepository, IEmailSender emailSender)
         {
             _logRepository = logRepository;
+            _emailSender = emailSender;
         }
 
         // GET: /LogLists/
@@ -123,5 +126,72 @@ namespace JobLogger.Controllers
             }
             return Json(new { success = false });
         }
+
+        // POST: /LogLists/EmailReport
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<JsonResult> EmailReport([FromBody] List<Guid> logs)
+        {
+            if (ModelState.IsValid)
+            {
+                var sb = new StringBuilder();
+                sb.Append($"<h1>Job Logs</h1><hr />{logs.Count()} logs total<hr />");
+                foreach (var id in logs)
+                {
+                    var log = await _logRepository.GetLogAsync(id);
+                    if (log is ActivityLog) {
+                        sb.Append(RenderActivity(log as ActivityLog));
+                    } else
+                    {
+                        sb.Append(RenderContact(log as ContactLog));
+                    }
+                }
+                await _emailSender.SendEmailAsync("", "Job Log Report", sb.ToString());
+                return Json(new { success = true });
+            }
+            return Json(new { success = false });
+        }
+
+        #region Helpers
+
+        public string RenderActivity(ActivityLog log)
+        {
+            return $@"<h2>Activity log</h2>
+                      <dl>
+                          <dt>Date:</dt>
+                          <dd>{log.LogDate.ToShortDateString()}</dd>
+                          <dt>Location:</dt>
+                          <dd>{log.Location}</dd>
+                          <dt>Description:</dt>
+                          <dd><pre>{log.Description}</pre></dd>
+                      </dl><hr />";
+        }
+
+        public string RenderContact(ContactLog log)
+        {
+            return $@"<h2>Contact log</h2>
+                      <dl>
+                          <dt>Date:</dt>
+                          <dd>{log.LogDate.ToShortDateString()}</dd>
+                          <dt>Employer:</dt>
+                          <dd>{log.Employer}</dd>
+                          <dt>Contact:</dt>
+                          <dd>{log.Contact}</dd>
+                          <dt>Contacted type:</dt>
+                          <dd>{typeof(ContactType).GetEnumName(log.ContactType)}</dd>
+                          <dt>Means:</dt>
+                          <dd>{typeof(ContactMeans).GetEnumName(log.ContactMeans)}</dd>
+                          <dt>Address:</dt>
+                          <dd>{log.Address}</dd>
+                          <dt>City:</dt>
+                          <dd>{log.City}</dd>
+                          <dt>State:</dt>
+                          <dd>{log.State}</dd>
+                          <dt>Description:</dt>
+                          <dd><pre>{log.Description}</pre></dd>
+                      </dl><hr />";
+        }
+
+        #endregion Helpers
     }
 }

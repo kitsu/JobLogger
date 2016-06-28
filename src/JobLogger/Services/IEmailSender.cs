@@ -7,6 +7,6 @@ namespace JobLogger.Services
 {
     public interface IEmailSender
     {
-        void SendEmail(string email, string subject, string message);
+        Task SendEmailAsync(string email, string subject, string message);
     }
 }

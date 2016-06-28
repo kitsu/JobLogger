@@ -7,6 +7,9 @@ function popoverAlert(notice) {
     $("#AlertInfo").text(notice);
     $("#AddAlertInfo").fadeIn(150).delay(1000).fadeOut(250);
 }
+function getAuthToken() {
+    return $("#aspaft input").first().val();
+}
 var BaseLog = (function () {
     function BaseLog(date) {
         if (date === void 0) { date = ""; }
@@ -25,32 +28,35 @@ var BaseLog = (function () {
             Delete: this.renderResult,
         };
     }
+    BaseLog.prototype.toJSON = function () {
+        return ko.mapping.toJSON(this, this.Mapping);
+    };
     BaseLog.prototype.addLog = function (form) {
-        var data = ko.mapping.toJSON(this, this.Mapping);
+        var data = this.toJSON();
         var AjaxOptions = {
             url: this.Urls.Add,
             type: "POST",
             beforeSend: function (xhr) {
-                xhr.setRequestHeader("RequestVerificationToken", $("#aspaft input").first().val());
+                xhr.setRequestHeader("RequestVerificationToken", getAuthToken());
             },
             contentType: "application/json",
             processData: false,
-            data: data,
+            data: data
         };
         console.log("Adding: ", data);
         $.ajax(AjaxOptions).done(this.Callbacks.Add);
     };
     BaseLog.prototype.updateLog = function (form) {
-        var data = ko.mapping.toJSON(this, this.Mapping);
+        var data = this.toJSON();
         var AjaxOptions = {
             url: this.Urls.Update + "/" + this.Id(),
             type: "POST",
             beforeSend: function (xhr) {
-                xhr.setRequestHeader("RequestVerificationToken", $("#aspaft input").first().val());
+                xhr.setRequestHeader("RequestVerificationToken", getAuthToken());
             },
             contentType: "application/json",
             processData: false,
-            data: data,
+            data: data
         };
         $.ajax(AjaxOptions).done(this.Callbacks.Update);
     };
@@ -60,7 +66,7 @@ var BaseLog = (function () {
             url: this.Urls.Delete,
             type: "DELETE",
             beforeSend: function (xhr) {
-                xhr.setRequestHeader("RequestVerificationToken", $("#aspaft input").first().val());
+                xhr.setRequestHeader("RequestVerificationToken", getAuthToken());
             },
             data: { "target": data }
         };
@@ -232,6 +238,34 @@ var ListModel = (function () {
         this.toggleSearched = function () {
             _this.Searched(!_this.Searched());
         };
+        this.emailReport = function () {
+            // Send server list of log ids to be emailed.
+            var logs = [];
+            for (var _i = 0, _a = _this.ShownLogs(); _i < _a.length; _i++) {
+                var log = _a[_i];
+                logs.push(log.Id());
+            }
+            var data = JSON.stringify(logs);
+            var AjaxOptions = {
+                url: "/LogLists/EmailReport/",
+                type: "POST",
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("RequestVerificationToken", getAuthToken());
+                },
+                contentType: "application/json",
+                processData: false,
+                data: data
+            };
+            console.log("Emailing: ", data);
+            $.ajax(AjaxOptions).done(function (result) {
+                if (result.success === true) {
+                    console.log("Email sent successfully!");
+                }
+                else {
+                    console.log("Problem sending email!");
+                }
+            });
+        };
         // Core members
         this.Logs = ko.observableArray([]);
         this.Count = ko.computed(function () { return _this.Logs().length; });
@@ -323,7 +357,6 @@ var ListModel = (function () {
         conModel.State(log.State);
         this.Logs.unshift(conModel);
     };
-    ListModel.prototype.updateFiltering = function () { };
     ListModel.prototype.logTemplate = function (log) {
         if (log instanceof ActLogModel) {
             return 'ActLogTemp';

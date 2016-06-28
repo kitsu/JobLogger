@@ -116,7 +116,7 @@ namespace JobLogger.Controllers
                     // Send an email with this link
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
-                    _emailSender.SendEmail(model.Email, "JobLogger - Confirm your account",
+                    await _emailSender.SendEmailAsync(model.Email, "JobLogger - Confirm your account",
                         $"Please confirm your JobLogger account by clicking <a href='{callbackUrl}'>this link</a>.");
                     _logger.LogInformation(3, "User created a new account with password.");
                     return RedirectToAction("EmailSent");
@@ -279,7 +279,7 @@ namespace JobLogger.Controllers
                 // Send an email with this link
                 var code = await _userManager.GeneratePasswordResetTokenAsync(user);
                 var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
-                _emailSender.SendEmail(model.Email, "Reset Password",
+                await _emailSender.SendEmailAsync(model.Email, "Reset Password",
                    $"Please reset your password by clicking here: <a href='{callbackUrl}'>link</a>");
                 return View("ForgotPasswordConfirmation");
             }

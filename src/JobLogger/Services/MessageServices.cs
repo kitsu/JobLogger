@@ -5,20 +5,41 @@ using System.Linq;
 using System.Threading.Tasks;
 using SendGrid;
 using SendGrid.Helpers.Mail;
+using Microsoft.AspNetCore.Identity;
+using JobLogger.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace JobLogger.Services
 {
-    public class AuthMessageSender : IEmailSender
+    public class EmailSender : IEmailSender
     {
-        public AuthMessageSender(IOptions<AuthMessageSenderOptions> optionsAccessor)
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public EmailSender(IOptions<EmailSenderOptions> optionsAccessor,
+            IHttpContextAccessor httpContextAccessor,
+            UserManager<ApplicationUser> userManager)
         {
             Options = optionsAccessor.Value;
+            _httpContextAccessor = httpContextAccessor;
+            _userManager = userManager;
         }
 
-        public AuthMessageSenderOptions Options { get; }  // set only via Secret Manager
+        public EmailSenderOptions Options { get; }  // set only via Secret Manager
 
-        public void SendEmail(string recipient, string subject, string message)
+        private async Task<ApplicationUser> GetCurrentUser()
         {
+            var user = _httpContextAccessor.HttpContext.User;
+            return await _userManager.GetUserAsync(user);
+        }
+
+        public async Task SendEmailAsync(string recipient, string subject, string message)
+        {
+            if (string.IsNullOrWhiteSpace(recipient))
+            {
+                var user = await GetCurrentUser();
+                recipient = user.Email;
+            }
             string apiKey = Options.SendGridAppKey;
             var sg = new SendGridAPIClient(apiKey);
 

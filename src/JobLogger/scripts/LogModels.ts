@@ -7,10 +7,15 @@ function popoverAlert(notice: string): void {
     $("#AddAlertInfo").fadeIn(150).delay(1000).fadeOut(250);
 }
 
+function getAuthToken(): string {
+    return $("#aspaft input").first().val();
+}
+
 interface ILogModel {
     Id: KnockoutObservable<string>;
     LogDate: KnockoutObservable<string>;
     Description : KnockoutObservable<string>;
+    toJSON(): string;
     addLog(form: Element): void;
     updateLog(form: Element): void;
     deleteLog(button: Element): void;
@@ -44,35 +49,37 @@ abstract class BaseLog implements ILogModel {
         };
     }
 
+    toJSON(): string {
+        return ko.mapping.toJSON(this, this.Mapping);
+    }
+
     addLog(form: Element): void {
-        let data: string = ko.mapping.toJSON(this, this.Mapping);
+        let data = this.toJSON();
         let AjaxOptions: any = {
             url: this.Urls.Add,
             type: "POST",
             beforeSend: function (xhr: any) {
-                xhr.setRequestHeader("RequestVerificationToken",
-                                     $("#aspaft input").first().val());
+                xhr.setRequestHeader("RequestVerificationToken", getAuthToken());
             },
             contentType: "application/json",
             processData: false,
-            data: data,
+            data: data
         };
         console.log("Adding: ", data);
         $.ajax(AjaxOptions).done(this.Callbacks.Add);
     }
 
     updateLog(form: Element): void {
-        let data: string = ko.mapping.toJSON(this, this.Mapping);
+        let data = this.toJSON();
         let AjaxOptions: any = {
             url: this.Urls.Update + "/" + this.Id(),
             type: "POST",
             beforeSend: function (xhr: any) {
-                xhr.setRequestHeader("RequestVerificationToken",
-                                     $("#aspaft input").first().val());
+                xhr.setRequestHeader("RequestVerificationToken", getAuthToken());
             },
             contentType: "application/json",
             processData: false,
-            data: data,
+            data: data
         };
         $.ajax(AjaxOptions).done(this.Callbacks.Update);
     }
@@ -83,8 +90,7 @@ abstract class BaseLog implements ILogModel {
             url: this.Urls.Delete,
             type: "DELETE",
             beforeSend: function (xhr: any) {
-                xhr.setRequestHeader("RequestVerificationToken",
-                                     $("#aspaft input").first().val());
+                xhr.setRequestHeader("RequestVerificationToken", getAuthToken());
             },
             data: { "target": data }
         };
@@ -373,7 +379,32 @@ class ListModel {
         this.Searched(!this.Searched());
     }
 
-    updateFiltering(): void {}
+    emailReport = (): void => {
+        // Send server list of log ids to be emailed.
+        let logs: Array<string> = [];
+        for (let log of this.ShownLogs()) {
+            logs.push(log.Id());
+        }
+        let data = JSON.stringify(logs);
+        let AjaxOptions: any = {
+            url: "/LogLists/EmailReport/",
+            type: "POST",
+            beforeSend: function (xhr: any) {
+                xhr.setRequestHeader("RequestVerificationToken", getAuthToken());
+            },
+            contentType: "application/json",
+            processData: false,
+            data: data
+        };
+        console.log("Emailing: ", data);
+        $.ajax(AjaxOptions).done((result) => {
+            if (result.success === true) {
+                console.log("Email sent successfully!");
+            } else {
+                console.log("Problem sending email!");
+            }
+        });
+    }
 
     logTemplate(log: AnyLog): string {
         if (log instanceof ActLogModel) {

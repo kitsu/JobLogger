@@ -13,7 +13,7 @@ namespace JobLoggerTests
     public class TestHomeController
     {
         [Fact]
-        public async void IndexGetsLogs()
+        public void IndexGetsLogs()
         {
             // Setup repo mock that returns an list of one ActivityLog
             var list = new List<BaseLog>();
@@ -23,7 +23,7 @@ namespace JobLoggerTests
                 .Returns(Task.FromResult<IEnumerable<BaseLog>>(list));
 
             var ctrl = new HomeController(repo.Object);
-            var result = await ctrl.Index();
+            var result = ctrl.Index();
             Assert.IsType<ViewResult>(result);
             var view = (ViewResult)result;
             var model = Assert.IsAssignableFrom<ICollection<BaseLog>>

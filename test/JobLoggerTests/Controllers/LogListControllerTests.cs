@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using JobLogger.Services;
+using System.Text.RegularExpressions;
 
 namespace JobLoggerTests
 {
@@ -16,28 +18,9 @@ namespace JobLoggerTests
         public static Guid goodGuid = Guid.Parse(goodId);
 
         [Fact]
-        public async void WeekGetsLogs()
-        {
-            // Setup repo mock that returns an list of one ActivityLog
-            var list = new List<BaseLog>();
-            list.Add(new ActivityLog());
-            var repo = new Mock<ILogRepository>();
-            repo.Setup(r => r.GetLogsAsync())
-                .Returns(Task.FromResult<IEnumerable<BaseLog>>(list));
-
-            var ctrl = new HomeController(repo.Object);
-            var result = await ctrl.Index();
-            Assert.IsType<ViewResult>(result);
-            var view = (ViewResult)result;
-            var model = Assert.IsAssignableFrom<ICollection<BaseLog>>
-                (view.ViewData.Model);
-            Assert.Equal(1, model.Count());
-            Assert.IsType<ActivityLog>(model.First());
-        }
-
-        [Fact]
         public async void IndexProvidesLogList()
         {
+            var mailer = new Mock<IEmailSender>();
             // Setup repo mock that returns an list of one ActivityLog
             var list = new List<BaseLog>();
             list.Add(new ActivityLog());
@@ -47,7 +30,7 @@ namespace JobLoggerTests
             repo.Setup(r => r.GetLogsAsync())
                 .Returns(Task.FromResult<IEnumerable<BaseLog>>(list));
 
-            var ctrl = new LogListsController(repo.Object);
+            var ctrl = new LogListsController(repo.Object, mailer.Object);
             var result = await ctrl.Index();
             Assert.IsType<JsonResult>(result);
             dynamic model = result.Value;
@@ -59,6 +42,7 @@ namespace JobLoggerTests
         [Fact]
         public async void EditGetHandlesIds()
         {
+            var mailer = new Mock<IEmailSender>();
             // Setup repo mock that returns an list of one ActivityLog
             var log = new ActivityLog();
             var repo = new Mock<ILogRepository>();
@@ -66,7 +50,7 @@ namespace JobLoggerTests
                 .Returns(Task.FromResult<BaseLog>(log));
 
             // Good guid test
-            var ctrl = new LogListsController(repo.Object);
+            var ctrl = new LogListsController(repo.Object, mailer.Object);
             var result = await ctrl.Edit(goodId);
             Assert.IsType<JsonResult>(result);
             dynamic model = result.Value;
@@ -83,6 +67,7 @@ namespace JobLoggerTests
         [Fact]
         public async void EditActivityPostSucceedsOnUpdate()
         {
+            var mailer = new Mock<IEmailSender>();
             // Setup repo mock that accepts one Id but not another
             var good = new ActivityLog();
             good.Id = new Guid();
@@ -93,7 +78,7 @@ namespace JobLoggerTests
             repo.Setup(r => r.UpdateAsync(bad)).Returns(Task.FromResult(false));
 
             // Good guid test
-            var ctrl = new LogListsController(repo.Object);
+            var ctrl = new LogListsController(repo.Object, mailer.Object);
             var result = await ctrl.EditActivity(good.Id, good);
             Assert.IsType<JsonResult>(result);
             dynamic model = result.Value;
@@ -115,6 +100,7 @@ namespace JobLoggerTests
         [Fact]
         public async void EditContactPostSucceedsOnUpdate()
         {
+            var mailer = new Mock<IEmailSender>();
             // Setup repo mock that accepts one Id but not another
             var good = new ContactLog();
             good.Id = new Guid();
@@ -125,7 +111,7 @@ namespace JobLoggerTests
             repo.Setup(r => r.UpdateAsync(bad)).Returns(Task.FromResult(false));
 
             // Good guid test
-            var ctrl = new LogListsController(repo.Object);
+            var ctrl = new LogListsController(repo.Object, mailer.Object);
             var result = await ctrl.EditContact(good.Id, good);
             Assert.IsType<JsonResult>(result);
             dynamic model = result.Value;
@@ -147,6 +133,7 @@ namespace JobLoggerTests
         [Fact]
         public async void AddActivityPostSucceedsOnAdd()
         {
+            var mailer = new Mock<IEmailSender>();
             // Setup repo mock that accepts one Id but not another
             var good = new ActivityLog();
             var repo = new Mock<ILogRepository>();
@@ -154,7 +141,7 @@ namespace JobLoggerTests
             repo.Setup(r => r.AddAsync(null)).Returns(Task.FromResult(false));
 
             // Good data test
-            var ctrl = new LogListsController(repo.Object);
+            var ctrl = new LogListsController(repo.Object, mailer.Object);
             var result = await ctrl.AddActivity(good);
             Assert.IsType<JsonResult>(result);
             dynamic model = result.Value;
@@ -170,6 +157,7 @@ namespace JobLoggerTests
         [Fact]
         public async void AddContactPostSucceedsOnAdd()
         {
+            var mailer = new Mock<IEmailSender>();
             // Setup repo mock that accepts one Id but not another
             var good = new ContactLog();
             var repo = new Mock<ILogRepository>();
@@ -177,7 +165,7 @@ namespace JobLoggerTests
             repo.Setup(r => r.AddAsync(null)).Returns(Task.FromResult(false));
 
             // Good data test
-            var ctrl = new LogListsController(repo.Object);
+            var ctrl = new LogListsController(repo.Object, mailer.Object);
             var result = await ctrl.AddContact(good);
             Assert.IsType<JsonResult>(result);
             dynamic model = result.Value;
@@ -193,6 +181,7 @@ namespace JobLoggerTests
         [Fact]
         public async void DeleteSucceedsOnDelete()
         {
+            var mailer = new Mock<IEmailSender>();
             // Setup repo mock that succeeds deleting one id
             var log = new ActivityLog();
             var repo = new Mock<ILogRepository>();
@@ -200,8 +189,48 @@ namespace JobLoggerTests
                 .Returns(Task.FromResult(true));
 
             // Good guid test
-            var ctrl = new LogListsController(repo.Object);
+            var ctrl = new LogListsController(repo.Object, mailer.Object);
             var result = await ctrl.Delete(goodId);
+            Assert.IsType<JsonResult>(result);
+            dynamic model = result.Value;
+            Assert.True(model.success);
+
+            // Bad guid test (this never hits the repo)
+            result = await ctrl.Delete("vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv");
+            Assert.IsType<JsonResult>(result);
+            model = result.Value;
+            Assert.False(model.success);
+        }
+
+        [Fact]
+        public async void EmailReportGeneratesEntryPerLog()
+        {
+            var mailer = new Mock<IEmailSender>();
+            mailer.Setup(r => r.SendEmailAsync("", It.IsAny<string>(),
+                It.IsRegex(".*conlog.*actlog.*",
+                RegexOptions.Multiline & RegexOptions.IgnoreCase)))
+                .Returns(Task.FromResult(false));
+            // Setup repo mock that succeeds deleting one id
+            var con = new ContactLog()
+            {
+                Id = new Guid(),
+                LogDate = DateTime.Now,
+                Description = "Conlog"
+            };
+            var act = new ActivityLog()
+            {
+                Id = new Guid(),
+                LogDate = DateTime.Now,
+                Description = "Actlog"
+            };
+            var repo = new Mock<ILogRepository>();
+            repo.Setup(r => r.GetLogAsync(con.Id))
+                .Returns(Task.FromResult(con as BaseLog));
+            repo.Setup(r => r.GetLogAsync(act.Id))
+                .Returns(Task.FromResult(act as BaseLog));
+
+            var ctrl = new LogListsController(repo.Object, mailer.Object);
+            var result = await ctrl.EmailReport(new List<Guid> { con.Id, act.Id });
             Assert.IsType<JsonResult>(result);
             dynamic model = result.Value;
             Assert.True(model.success);
