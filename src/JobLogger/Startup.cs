@@ -81,6 +81,11 @@ namespace JobLogger
                 app.UseDatabaseErrorPage();
                 app.UseBrowserLink();
             }
+            else if (env.IsStaging())
+            {
+                app.UseDeveloperExceptionPage();
+                app.UseDatabaseErrorPage();
+            }
             else
             {
                 app.UseExceptionHandler("/Home/Error");

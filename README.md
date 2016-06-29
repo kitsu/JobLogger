@@ -26,7 +26,6 @@ I intend to deploy this on Azure, but it is still early days.
 
 ## ToDo
 
-- [x] Research Azure deployment, setup account, make test deployment.
 - [ ] Add Google Analytics, setup Ad-Unit, add Url to Search Console.
 - [ ] ...
 - [ ] Profit?
