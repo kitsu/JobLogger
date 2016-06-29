@@ -17,11 +17,6 @@ Interesting Features:
 
 ## Getting Started
 
-To run this you will *may* need to re-create the `wwwroot/lib` and
-`wwwroot/scripts` directories. Bower should then be able to populate the lib
-directory. The scripts directory will populate when the Typescript code is
-built (which is configured in gulpfile.js to happen on project build).
-
 This project was created using Visual Studio Community 2015 on Windows 10.
 Additional configuration may be required on other platforms/IDEs.
 
@@ -31,8 +26,7 @@ I intend to deploy this on Azure, but it is still early days.
 
 ## ToDo
 
-- [x] Create per-user sharable link with uneditable list view.
-- [ ] Research Azure deployment, setup account, make test deployment.
+- [x] Research Azure deployment, setup account, make test deployment.
 - [ ] Add Google Analytics, setup Ad-Unit, add Url to Search Console.
 - [ ] ...
 - [ ] Profit?
