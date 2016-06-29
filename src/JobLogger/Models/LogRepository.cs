@@ -14,6 +14,7 @@ namespace JobLogger.Models
     {
         Task<IEnumerable<BaseLog>> GetLogsAsync();
         Task<BaseLog> GetLogAsync(Guid logId);
+        BaseLog GetLogAsync(string userId, Guid logId);
         Task<bool> AddAsync(BaseLog log);
         Task<bool> UpdateAsync(BaseLog log);
         Task<bool> DeleteAsync(Guid logId);
@@ -58,20 +59,28 @@ namespace JobLogger.Models
             return new List<BaseLog>();
         }
 
-        public async Task<BaseLog> GetLogAsync(Guid logId)
+        public BaseLog GetLogAsync(string userId, Guid logId)
         {
-            var cuser = await GetCurrentUser();
-            if (cuser != null)
+            if (userId != null)
             {
-                var uid = cuser.Id;
                 var logs = from log in _context.JobLogs
-                           where log.ApplicationUser.Id == uid
+                           where log.ApplicationUser.Id == userId
                            where log.Id == logId
                            select log;
                 if (logs.Count() > 0)
                 {
                     return logs.First();
                 }
+            }
+            return null;
+        }
+
+        public async Task<BaseLog> GetLogAsync(Guid logId)
+        {
+            var user = await GetCurrentUser();
+            if (user != null)
+            {
+                return GetLogAsync(user.Id, logId);
             }
             return null;
         }

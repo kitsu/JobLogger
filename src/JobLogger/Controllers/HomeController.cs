@@ -2,19 +2,14 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using JobLogger.Models;
+using System;
+using System.Collections.Generic;
 
 namespace JobLogger.Controllers
 {
     [RequireHttps]
     public class HomeController : Controller
     {
-
-        private readonly ILogRepository _logRepository;
-
-        public HomeController(ILogRepository logRepository)
-        {
-            _logRepository = logRepository;
-        }
 
         public IActionResult Index()
         {

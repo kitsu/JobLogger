@@ -11,6 +11,10 @@ function getAuthToken(): string {
     return $("#aspaft input").first().val();
 }
 
+function getUserId(): string {
+    return $("#AppUserId").text().trim();
+}
+
 interface ILogModel {
     Id: KnockoutObservable<string>;
     LogDate: KnockoutObservable<string>;
@@ -269,6 +273,7 @@ class ListModel {
     FilterDate: KnockoutObservable<string>;
     Searched: KnockoutObservable<Boolean>;
     SearchString: KnockoutObservable<string>;
+    ShareHref: KnockoutComputed<string>;
 
     constructor() {
         // Core members
@@ -300,6 +305,15 @@ class ListModel {
             });
         });
         this.ShownCount = ko.computed(() => { return this.ShownLogs().length });
+        this.ShareHref = ko.computed(() => {
+            let userId = getUserId();
+            let logIds = new Array<string>();
+            for (let log of this.ShownLogs()) {
+                logIds.push(log.Id());
+            }
+            let query = logIds.join(",");
+            return `/Sharing?userId=${userId}&logs=${query}`;
+        });
     }
 
     updateList = (result: any): void => {

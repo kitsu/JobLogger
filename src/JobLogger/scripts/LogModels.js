@@ -10,6 +10,9 @@ function popoverAlert(notice) {
 function getAuthToken() {
     return $("#aspaft input").first().val();
 }
+function getUserId() {
+    return $("#AppUserId").text().trim();
+}
 var BaseLog = (function () {
     function BaseLog(date) {
         if (date === void 0) { date = ""; }
@@ -295,6 +298,16 @@ var ListModel = (function () {
             });
         });
         this.ShownCount = ko.computed(function () { return _this.ShownLogs().length; });
+        this.ShareHref = ko.computed(function () {
+            var userId = getUserId();
+            var logIds = new Array();
+            for (var _i = 0, _a = _this.ShownLogs(); _i < _a.length; _i++) {
+                var log = _a[_i];
+                logIds.push(log.Id());
+            }
+            var query = logIds.join(",");
+            return "/Sharing?userId=" + userId + "&logs=" + query;
+        });
     }
     ListModel.prototype.addAct = function (log) {
         var _this = this;

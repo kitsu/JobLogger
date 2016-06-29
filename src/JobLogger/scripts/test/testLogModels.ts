@@ -167,6 +167,10 @@ describe("ListModel", () => {
         City: "Somewhere",
         State: "SW",
     };
+    // Replace getUserId function (JQuery dependancy)
+    beforeAll(() => {
+        spyOn(window, "getUserId").and.callFake(() => { return "FakeId" });
+    });
     // Test log addition behavior
     it("updating with activity adds ActLogModel instance", () => {
         let model = buildListModel([actData]);
@@ -177,6 +181,18 @@ describe("ListModel", () => {
         let model = buildListModel([conData]);
         expect(model.Count()).toEqual(1);
         expect(model.Logs.pop() instanceof ConLogModel).toBe(true);
+    });
+    // Test sharing href
+    it("contains SharingHref", () => {
+        let model = buildListModel([]);
+        expect(model.ShareHref).toBeDefined();
+    });
+    it("should produce a querry string containing userId and logs", () => {
+        let model = buildListModel([]);
+        let re = new RegExp(".*sharing\\?userId=FakeId&logs=.*", 'i');
+        expect(re.test(model.ShareHref())).toBe(true);
+        // Doesn't work?
+        //expect(model.ShareHref()).toMatch(/.*sharing\?userId=FakeId&logs=.*/, 'i');
     });
     // Ensure list search/filter members
     it("contains Shown members", () => {
