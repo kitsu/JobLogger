@@ -86,9 +86,6 @@ namespace JobLogger
             else
             {
                 app.UseExceptionHandler("/Home/Error");
-                // FIXME remove after done debugging!
-                app.UseDeveloperExceptionPage();
-                app.UseDatabaseErrorPage();
             }
 
             app.UseStaticFiles();
