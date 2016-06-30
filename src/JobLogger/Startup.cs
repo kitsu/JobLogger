@@ -13,6 +13,8 @@ using JobLogger.Data;
 using JobLogger.Models;
 using JobLogger.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.HttpOverrides;
 
 namespace JobLogger
 {
@@ -29,9 +31,6 @@ namespace JobLogger
             {
                 // For more details on using the user secret store see http://go.microsoft.com/fwlink/?LinkID=532709
                 builder.AddUserSecrets();
-
-                // This will push telemetry data through Application Insights pipeline faster, allowing you to view results immediately.
-                builder.AddApplicationInsightsSettings(developerMode: true);
             }
 
             builder.AddEnvironmentVariables();
@@ -44,7 +43,6 @@ namespace JobLogger
         public void ConfigureServices(IServiceCollection services)
         {
             // Add framework services.
-            services.AddApplicationInsightsTelemetry(Configuration);
 
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
@@ -60,6 +58,12 @@ namespace JobLogger
                 options.Filters.Add(new RequireHttpsAttribute());
             });
 
+            // Per https://github.com/aspnet/IISIntegration/issues/140#issuecomment-215135928
+            services.Configure<ForwardedHeadersOptions>(options =>
+                        {
+                            options.ForwardedHeaders = ForwardedHeaders.XForwardedProto;
+            });
+
             // Add application services.
             services.AddTransient<IEmailSender, EmailSender>();
             services.Configure<EmailSenderOptions>(Configuration);
@@ -72,8 +76,6 @@ namespace JobLogger
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
-
-            app.UseApplicationInsightsRequestTelemetry();
 
             if (env.IsDevelopment())
             {
@@ -88,8 +90,6 @@ namespace JobLogger
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();
             }
-
-            app.UseApplicationInsightsExceptionTelemetry();
 
             app.UseStaticFiles();
             app.UseDefaultFiles();

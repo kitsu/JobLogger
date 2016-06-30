@@ -5,6 +5,7 @@ using JobLogger.Models;
 
 namespace JobLogger.Controllers
 {
+    [RequireHttps]
     public class SharingController : Controller
     {
 
