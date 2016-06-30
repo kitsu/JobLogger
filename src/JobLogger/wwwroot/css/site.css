@@ -98,3 +98,8 @@ pre {
     z-index: 101;
     display: none;
 }
+
+/* Modified hr for "Sposered Link" span */
+span.labeled-hr hr {
+    margin-top: 0;
+}
