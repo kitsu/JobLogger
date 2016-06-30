@@ -17,13 +17,20 @@ describe("ActLogModel", function () {
     it("contains a Mapping", function () {
         expect(model.Mapping).toBeDefined();
     });
-    it("Mapping contains extra members", function () {
+    it("mapping contains extra members", function () {
         expect(model.Mapping)
             .toEqual(jasmine.objectContaining({
             "ignore": jasmine.arrayContaining([
                 "Mapping", "Urls", "Callbacks"
             ])
         }));
+    });
+    it("the toJS result doesn't contain anything extra", function () {
+        expect(JSON.parse(model.toJSON())).toEqual({
+            LogDate: "now",
+            Location: "",
+            Description: "",
+        });
     });
     it("contains a Callbacks map", function () {
         expect(model.Callbacks)
@@ -76,6 +83,20 @@ describe("ConLogModel", function () {
                 "Mapping", "Urls", "Callbacks"
             ])
         }));
+    });
+    it("the toJS result doesn't contain anything extra", function () {
+        expect(JSON.parse(model.toJSON())).toEqual({
+            LogDate: "now",
+            Employer: "",
+            ContactType: "0",
+            ContactMeans: "0",
+            Contact: "",
+            Phone: "",
+            Address: "",
+            City: "",
+            State: "SW",
+            Description: "",
+        });
     });
     it("contains a Callbacks map", function () {
         expect(model.Callbacks)
@@ -186,8 +207,6 @@ describe("ListModel", function () {
         var model = buildListModel([]);
         var re = new RegExp(".*sharing\\?userId=FakeId&logs=.*", 'i');
         expect(re.test(model.ShareHref())).toBe(true);
-        // Doesn't work?
-        //expect(model.ShareHref()).toMatch(/.*sharing\?userId=FakeId&logs=.*/, 'i');
     });
     // Ensure list search/filter members
     it("contains Shown members", function () {

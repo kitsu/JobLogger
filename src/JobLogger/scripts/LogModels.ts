@@ -121,7 +121,7 @@ class ActLogModel extends BaseLog implements ILogModel {
         this.Urls.Add =  "/LogLists/AddActivity";
         this.Urls.Update =  "/LogLists/EditActivity";
         this.Mapping = {
-            "ignore": ["Mapping", "Urls", "Callbacks", "Edit", "Shown", "Id",
+            "ignore": ["toJSON", "Mapping", "Urls", "Callbacks", "Edit", "Shown", "Id",
                        "addLog", "updateLog", "deleteLog", "renderResult",
                        "toggleEdit"]
         };
@@ -175,7 +175,7 @@ class ConLogModel extends BaseLog implements ILogModel {
         this.Urls.Update =  "/LogLists/EditContact";
         // This is used to exclude members from ko.toJSON
         this.Mapping = {
-            "ignore": ["Mapping", "Urls", "Callbacks", "Edit", "Shown", "Id",
+            "ignore": ["toJSON", "Mapping", "Urls", "Callbacks", "Edit", "Shown", "Id",
                        "addLog", "updateLog", "deleteLog", "renderResult",
                         "addressPrompt", "contactPrompt", "methodName",
                         "meansName", "toggleEdit"]
