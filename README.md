@@ -22,13 +22,9 @@ Additional configuration may be required on other platforms/IDEs.
 
 ## Deployment
 
-I intend to deploy this on Azure, but it is still early days.
-
-## ToDo
-
-- [ ] Add Google Analytics, setup Ad-Unit, add Url to Search Console.
-- [ ] ...
-- [ ] Profit?
+This App is currently deployed on Azure as a WebApp at https://joblogger.azurewebsites.net/
+. Deployment happens automatically when changes are pushed to
+[this Github repo](https://github.com/kitsu/JobLogger).
 
 ## License
 
