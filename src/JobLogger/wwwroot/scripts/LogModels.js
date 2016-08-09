@@ -5,7 +5,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 function popoverAlert(notice) {
     $("#AlertInfo").text(notice);
-    $("#AddAlertInfo").fadeIn(150).delay(1000).fadeOut(250);
+    $("#AddAlertInfo").fadeIn(150).delay(2000).fadeOut(250);
 }
 function getAuthToken() {
     return $("#aspaft input").first().val();
@@ -263,6 +263,7 @@ var ListModel = (function () {
             $.ajax(AjaxOptions).done(function (result) {
                 if (result.success === true) {
                     console.log("Email sent successfully!");
+                    popoverAlert("Email has been sent to your account!");
                 }
                 else {
                     console.log("Problem sending email!");

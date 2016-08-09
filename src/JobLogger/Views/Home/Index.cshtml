@@ -16,6 +16,13 @@
         @{var user = await UserManager.GetUserAsync(User);}
         @user.Id
     </div>
+    <div style="position: relative">
+        <div id="AddAlertInfo" class="temp-notice alert alert-info">
+            <div class="alert alert-info">
+                <h4 id="AlertInfo" class="text-center">Info Alert!</h4>
+            </div>
+        </div>
+    </div>
     <div id="AddPanel" class="panel panel-default">
         <div class="panel-heading" role="tab" id="AddHeading">
             <h4 class="panel-title pull-left">
@@ -30,13 +37,6 @@
         </div>
         <div id="AddPanelBody" class="panel-collapse collapse"
              role="tabpanel" aria-labelledby="AddHeading">
-            <div style="position: relative">
-                <div id="AddAlertInfo" class="temp-notice alert alert-info">
-                    <div class="alert alert-info">
-                        <h4 id="AlertInfo" class="text-center">Info Alert!</h4>
-                    </div>
-                </div>
-            </div>
             <div class="panel-body">
                 <!-- Nav tabs -->
                 <ul class="nav nav-tabs" role="tablist">

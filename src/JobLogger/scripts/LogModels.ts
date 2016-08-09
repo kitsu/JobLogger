@@ -4,7 +4,7 @@ declare var listModel: ListModel;
 
 function popoverAlert(notice: string): void {
     $("#AlertInfo").text(notice);
-    $("#AddAlertInfo").fadeIn(150).delay(1000).fadeOut(250);
+    $("#AddAlertInfo").fadeIn(150).delay(2000).fadeOut(250);
 }
 
 function getAuthToken(): string {
@@ -414,6 +414,7 @@ class ListModel {
         $.ajax(AjaxOptions).done((result) => {
             if (result.success === true) {
                 console.log("Email sent successfully!");
+                popoverAlert("Email has been sent to your account!");
             } else {
                 console.log("Problem sending email!");
             }
