@@ -1,7 +1,7 @@
 ﻿
 describe("PrevSunday", () => {
-    it("given a Sunday returns the preceeding Sunday", () => {
-        // This comming Sunday at the time of writing
+    it("given a Sunday returns the preceding Sunday", () => {
+        // This coming Sunday at the time of writing
         let date = new Date("Jun 26 2016");
         let sunday = PrevSunday(date);
         expect(sunday.day()).toEqual(0);
@@ -45,12 +45,12 @@ describe("InWeek", () => {
         let date = "2016-06-30";
         expect(InWeek(date, week)).toBe(false);
     });
-    it("Returns true when provided date is preceeding Monday of week", () => {
+    it("Returns true when provided date is preceding Monday of week", () => {
         // Thursday at the time of writing
         let date = "2016-06-20";
         expect(InWeek(date, week)).toBe(true);
     });
-    it("Returns false when provided date is preceeding Sunday of week", () => {
+    it("Returns false when provided date is preceding Sunday of week", () => {
         // Thursday at the time of writing
         let date = "2016-06-19";
         expect(InWeek(date, week)).toBe(false);
@@ -81,7 +81,7 @@ describe("SearchMatches", () => {
         log.Description("This string contains a Match!");
         expect(SearchMatches(goodq, log)).toBe(true);
     });
-    it("given a non-matching query and an act logreturns false", () => {
+    it("given a non-matching query and an act log returns false", () => {
         let log = new ActLogModel("now");
         log.Location("This string contains a Match!");
         log.Description("This string contains a Match!");
@@ -118,7 +118,7 @@ describe("SearchMatches", () => {
         log.State("This string contains a Match!");
         expect(SearchMatches(goodq, log)).toBe(true);
     });
-    it("given a non-matching query and an con logreturns false", () => {
+    it("given a non-matching query and an con log returns false", () => {
         let log = new ConLogModel("now");
         log.Description("This string contains a Match!");
         log.Employer("This string contains a Match!");

@@ -1,6 +1,6 @@
 describe("PrevSunday", function () {
-    it("given a Sunday returns the preceeding Sunday", function () {
-        // This comming Sunday at the time of writing
+    it("given a Sunday returns the preceding Sunday", function () {
+        // This coming Sunday at the time of writing
         var date = new Date("Jun 26 2016");
         var sunday = PrevSunday(date);
         expect(sunday.day()).toEqual(0);
@@ -42,12 +42,12 @@ describe("InWeek", function () {
         var date = "2016-06-30";
         expect(InWeek(date, week)).toBe(false);
     });
-    it("Returns true when provided date is preceeding Monday of week", function () {
+    it("Returns true when provided date is preceding Monday of week", function () {
         // Thursday at the time of writing
         var date = "2016-06-20";
         expect(InWeek(date, week)).toBe(true);
     });
-    it("Returns false when provided date is preceeding Sunday of week", function () {
+    it("Returns false when provided date is preceding Sunday of week", function () {
         // Thursday at the time of writing
         var date = "2016-06-19";
         expect(InWeek(date, week)).toBe(false);
@@ -77,7 +77,7 @@ describe("SearchMatches", function () {
         log.Description("This string contains a Match!");
         expect(SearchMatches(goodq, log)).toBe(true);
     });
-    it("given a non-matching query and an act logreturns false", function () {
+    it("given a non-matching query and an act log returns false", function () {
         var log = new ActLogModel("now");
         log.Location("This string contains a Match!");
         log.Description("This string contains a Match!");
@@ -114,7 +114,7 @@ describe("SearchMatches", function () {
         log.State("This string contains a Match!");
         expect(SearchMatches(goodq, log)).toBe(true);
     });
-    it("given a non-matching query and an con logreturns false", function () {
+    it("given a non-matching query and an con log returns false", function () {
         var log = new ConLogModel("now");
         log.Description("This string contains a Match!");
         log.Employer("This string contains a Match!");
